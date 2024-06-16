@@ -1,6 +1,6 @@
 Python Version = 3.12
 
-C:\Users\El_Ra\PycharmProjects\ASQIT\.venv\Scripts\python.exe -m pip install --upgrade pip setuptools wheel
+pip install --upgrade pip setuptools wheel // Might output alternative command for installation
 
 pip install gymnasium
 

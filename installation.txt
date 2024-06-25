@@ -1,5 +1,7 @@
 Python Version = 3.12
 
+pip install numpy (Version 1.26.4)
+
 pip install --upgrade pip setuptools wheel // Might output alternative command for installation
 
 pip install gymnasium

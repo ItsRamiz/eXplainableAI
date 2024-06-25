@@ -1115,9 +1115,11 @@ model = PPO.load(path='model.zip', env=env)
 
 frame_rate = 15     
 values = [0, 1, 2, 3, 4, 5, 6, 10]
-probabilities = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.3]
+probabilities = [0.1, 0.1, 0.1, 0, 0.1, 0, 0, 0.6]
 videos_to_extract = []
 number_of_steps = 0
+
+isPickedKey = False
 
 # Extract 10 different videos
 for episode_id in range(10):
@@ -1127,15 +1129,20 @@ for episode_id in range(10):
     curr_number_of_steps = 0
     observation, info = env.reset()
     video_saved = False  # New flag to indicate if video segment was saved
-
+    isPickedKey = False
     for step in range(10000):
         number_of_steps += 1
         curr_number_of_steps += 1
+
         action, _states = model.predict(observation, deterministic=False)
 
-        values.pop()
-        values.append(action)
-        action = np.random.choice(values, size=1, p=probabilities)
+        if(action == 3):
+            isPickedKey = True
+
+        if(isPickedKey == True):
+            values.pop()
+            values.append(action)
+            action = np.random.choice(values, size=1, p=probabilities)
 
         observation, reward, terminated, truncated, info = env.step(action)
 
@@ -1195,7 +1202,8 @@ for episode_id in range(10):
         v[4] = 1  # in case of more conditions that we want to add
 
         if terminated or truncated:
-            if all(v) :  # Check if time of video matches user input
+            isPickedKey = False
+            if all(v):  # Check if time of video matches user input
                 if (curr_number_of_steps - first) >= (user_inputs[0] * frame_rate):
                     end = curr_number_of_steps
                     videos_to_extract.append((episode_id, first, end))

@@ -47,10 +47,18 @@ class SimpleEnv(MiniGridEnv):
 
         # Generate vertical separation wall
         for i in range(0, height):
-            self.grid.set(5, i, Wall())
+            self.grid.set(6, i, Wall())
+
+        self.grid.set(2,3,Wall())
+        self.grid.set(3,3,Wall())
+        self.grid.set(5, 3, Wall())
+        self.grid.set(5, 4, Wall())
+
+        self.grid.set(2,5,Wall())
+        self.grid.set(3,5,Wall())
 
         # Place the door and key
-        self.grid.set(5, 6, Door(COLOR_NAMES[0], is_locked=True))
+        self.grid.set(6, 6, Door(COLOR_NAMES[0], is_locked=True))
         self.grid.set(3, 6, Key(COLOR_NAMES[0]))
 
         # Place a goal square in the bottom-right corner

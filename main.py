@@ -6,10 +6,16 @@ import numpy as np
 import torch
 from stable_baselines3 import PPO
 from minigrid.wrappers import FlatObsWrapper
+from minigrid.core.world_object import Door, Goal, Key, Wall
 from minigrid.manual_control import ManualControl
 
 from custom_environment_test import createCustomEnv
-
+def get_key_color(self):
+    for x in range(self.grid.width):
+        for y in range(self.grid.height):
+            obj = self.grid.get(x, y)
+            if isinstance(obj, Door):
+                return obj.color
 
 #np.set_printoptions(threshold=np.inf)
 
@@ -36,20 +42,21 @@ for _ in range(10000):
 
 
     action, _states = model.predict(observation, deterministic=False)
+    if(action ==3):
+        print(get_key_color(env))
+    #values.pop()
+    #values.append(action)
+    #action = np.random.choice(values, size=1, p=probabilities)
 
-    values.pop()
-    values.append(action)
-    action = np.random.choice(values, size=1, p=probabilities)
-
-    if action == 3:
-        number_of_steps_until_key = number_of_steps
+    #if action == 3:
+    #    number_of_steps_until_key = number_of_steps
 
     observation, reward, terminated, truncated, info = env.step(action)
 
 
     if terminated or truncated:
 
-        print("#END OF SESSION#")
+        print("#END OF S1ESSION#")
         print("Stats:")
         print("STEPS = " , number_of_steps)
         print("STEP U. KEY = " , number_of_steps_until_key)

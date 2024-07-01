@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock Env</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+        }
+        h1, h2 {
+            margin: 0 0 20px;
+        }
+        .image-container {
+            margin-bottom: 20px;
+        }
+        .input-field, select, input[type="checkbox"] {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .input-field:hover, select:hover, input[type="checkbox"]:hover {
+            background-color: #555;
+        }
+        .submit-button {
+            background-color: #222;
+        }
+        .submit-button:hover {
+            background-color: #333;
+        }
+        .checkbox-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .checkbox-container label {
+            flex-grow: 1;
+            text-align: left;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="input-field" onclick="history.back()">Back</button>
+        <h1>Enter your requirements for obtaining the videos to investigate the agent's behaviors.</h1>
+        <h2>UnLock Env (Name Of Env)</h2>
+        <div class="image-container">
+            <img src="images/env1.png" alt="Environment Image" width="100%">
+        </div>
+        <form id="requirementsForm">
+            <input class="input-field" type="text" name="minDuration" placeholder="Min Duration of Video" required>
+            <input class="input-field" type="text" name="maxSteps" placeholder="Max Num Of Steps" required>
+            <input class="input-field" type="text" name="minSteps" placeholder="Min Num Of Steps" required>
+            <div class="checkbox-container">
+                <input type="checkbox" id="isWinner" name="isWinner">
+                <label for="isWinner">IsWinner (CheckBox)</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="hitAWall" name="hitAWall">
+                <label for="hitAWall">Hit A Wall (CheckBox)</label>
+            </div>
+            <select class="input-field" name="keyColor" required>
+                <option value="" disabled selected>Color Of Key</option>
+                <option value="red">red</option>
+                <option value="green">green</option>
+                <option value="blue">blue</option>
+                <option value="grey">grey</option>
+                <option value="purple">purple</option>
+                <option value="yellow">yellow</option>
+            </select>
+            <input class="input-field" type="text" name="doorPosition" placeholder="Position of Door" required>
+            <input class="input-field" type="text" name="stepsUntilKey" placeholder="Num of Steps Until Last Picked Key" required>
+            <button type="submit" class="input-field submit-button">Submit</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('requirementsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Get form data
+            const formData = new FormData(event.target);
+            const queryString = new URLSearchParams(formData).toString();
+            // Redirect to the video display page with query parameters
+            window.location.href = `video.html?${queryString}`;
+        });
+    </script>
+</body>
+</html>

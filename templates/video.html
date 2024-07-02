@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Display</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 800px;
+        }
+        h1 {
+            margin-top: 900px;
+            margin: 0 0 20px;
+        }
+        .video-container {
+            background-color: #444;
+            height: 400px; /* Increased height for the main video */
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .video-container.video-clicked {
+            height: 300px; /* Reduced height for other videos */
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .video {
+            background-color: #555;
+            width: 150px;
+            height: 100px;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .input-field {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 100px;
+        }
+        .input-field:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="input-field" onclick="history.back()">Back</button>
+        <h1>The Videos According To Your Requests</h1>
+        <div class="video-container" id="mainVideoContainer">
+            <video id="mainVideo" controls></video>
+        </div>
+        <div class="video-grid" id="videoGrid">
+            <!-- Videos will be loaded here dynamically -->
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define some sample videos
+            const sampleVideos = [
+                'C:/ASQ_IT/videos/rl-video-episode-0.mp4',
+                'C:/ASQ_IT/videos/rl-video-episode-1.mp4',
+                'C:/ASQ_IT/videos/rl-video-episode-2.mp4'
+            ];
+
+            // Select the main video element
+            const mainVideo = document.getElementById('mainVideo');
+            // Set the default main video
+            mainVideo.src = sampleVideos[0];
+
+            // Select the video grid
+            const videoGrid = document.getElementById('videoGrid');
+
+            // Function to play a video
+            function playVideo(videoSrc) {
+                mainVideo.src = videoSrc;
+                mainVideo.play();
+
+                // Highlight the clicked video
+                const videos = document.querySelectorAll('.video');
+                videos.forEach(video => {
+                    if (video.querySelector('video').src === videoSrc) {
+                        video.classList.add('active');
+                    } else {
+                        video.classList.remove('active');
+                    }
+                });
+            }
+
+            // Load the other videos
+            sampleVideos.forEach((videoSrc, index) => {
+                const videoWrapper = document.createElement('div');
+                videoWrapper.classList.add('video');
+                
+                const video = document.createElement('video');
+                video.src = videoSrc;
+                video.controls = true;
+                videoWrapper.appendChild(video);
+
+                // Add click event to replace the main video source
+                videoWrapper.addEventListener('click', () => {
+                    playVideo(videoSrc);
+
+                    // Toggle size of videos
+                    document.querySelectorAll('.video-container').forEach((container) => {
+                        container.classList.remove('video-clicked');
+                    });
+                    document.getElementById('mainVideoContainer').classList.add('video-clicked');
+                });
+
+                videoGrid.appendChild(videoWrapper);
+            });
+        });
+    </script>
+</body>
+</html>

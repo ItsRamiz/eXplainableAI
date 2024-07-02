@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- This is the title of the webpage that appears on the browser tab -->
+    <title>Unlock Env</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%; /* Adjust width as needed */
+            max-width: 1200px; /* Maximum width for better readability */
+            margin: 0 auto; /* Center the container */
+        }
+        h1 {
+            font-size: 2em; /* Adjust font size as needed */
+            margin: 5px 0; /* Top margin increased */
+            margin-bottom: 50px; /* Bottom margin increased */
+            margin-top: 500px;
+        }
+        h2 {
+            font-size: 5em; /* Adjust font size as needed */
+            margin: 5px 0; /* Top and bottom margins adjusted */
+            margin-bottom: 50px; /* Bottom margin increased */
+            margin-top:  50px;
+        }
+        .image-container {
+            margin-bottom: 50px; /* Reduced margin for better spacing */
+        }
+        .input-field, select {
+            display: block;
+            width: 50%;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .input-field:hover, select:hover {
+            background-color: #555;
+        }
+        .submit-button {
+            background-color: #222;
+        }
+        .submit-button:hover {
+            background-color: #333;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center items horizontally */
+            margin: 10px auto; /* Adjust margin as needed */
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px; /* Adjust margin between checkbox and label */
+        }
+        .checkbox-container label {
+            font-size: 16px; /* Adjust label font size */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="input-field" onclick="history.back()">Back</button>
+        <h1>Enter your requirements for obtaining the videos to investigate the agent's behaviors</h1>
+        <!-- This is the title displayed within the content of your page -->
+        <h2>UnLock Environment</h2>
+        <div class="image-container">
+            <img src="images/UnlockEnv.gif" alt="Environment Image" width="50%">
+        </div>
+        <form id="requirementsForm">
+            <!-- Text fields -->
+            <input class="input-field" type="text" name="minDuration" placeholder="Min Duration of Video" required>
+            <input class="input-field" type="text" name="maxSteps" placeholder="Max Num Of Steps" required>
+            <input class="input-field" type="text" name="minSteps" placeholder="Min Num Of Steps" required>
+
+            <!-- Checkboxes -->
+            <div class="checkbox-container">
+                <input type="checkbox" id="isWinner" name="isWinner">
+                <label for="isWinner">IsWinner</label>
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="hitAWall" name="hitAWall">
+                <label for="hitAWall">Hit A Wall</label>
+            </div>
+
+            <!-- Combo box -->
+            <select class="input-field" name="keyColor" required>
+                <option value="" disabled selected>Color Of Key</option>
+                <option value="red">red</option>
+                <option value="green">green</option>
+                <option value="blue">blue</option>
+                <option value="grey">grey</option>
+                <option value="purple">purple</option>
+                <option value="yellow">yellow</option>
+            </select>
+
+            <!-- Additional text fields -->
+            <input class="input-field" type="text" name="doorPosition" placeholder="Position of Door" required>
+            <input class="input-field" type="text" name="stepsUntilKey" placeholder="Num of Steps Until Last Picked Key" required>
+
+            <!-- Submit button -->
+            <button type="submit" class="input-field submit-button">NEXT</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('requirementsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Get form data
+            const formData = new FormData(event.target);
+            const queryString = new URLSearchParams(formData).toString();
+            // Redirect to the video display page with query parameters
+            window.location.href = `video.html?${queryString}`;
+        });
+    </script>
+</body>
+</html>

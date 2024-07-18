@@ -79,31 +79,35 @@
         <h1>Enter your requirements for obtaining the videos to investigate the agent's behaviors</h1>
         <h2>UnLock Environment</h2>
         <div class="image-container">
-            <img src="{{ url_for('static', filename='images/UnlockEnv.gif') }}" alt="Environment Image" width="50%">
+            // image
+            <img src="{{ url_for('static', filename='images/CrossingEnv.gif') }}" alt="Environment Image" width="50%">
         </div>
         <form action="/submit" method="POST">
-            <input class="input-field" type="text" name="minDuration" placeholder="Min Duration of Video" required>
-            <input class="input-field" type="text" name="maxSteps" placeholder="Max Num Of Steps" required>
-            <input class="input-field" type="text" name="minSteps" placeholder="Min Num Of Steps" required>
+            // format of text field input
+            <input class="input-field" type="text" name="input1" placeholder="input 1" required>
+            <input class="input-field" type="text" name="input2" placeholder="input 2" required>
+            <input class="input-field" type="text" name="input3" placeholder="input 3" required>
             <div class="checkbox-container">
-                <input type="checkbox" id="isWinner" name="isWinner">
-                <label for="isWinner">Is Winner</label>
+                <input type="checkbox" id="input4" name="input4">
+                <label for="input4">input 5</label>
             </div>
+            // format of chackbox input
             <div class="checkbox-container">
-                <input type="checkbox" id="hitAWall" name="hitAWall">
-                <label for="hitAWall">Hit A Wall</label>
+                <input type="checkbox" id="input5" name="input5">
+                <label for="input5">input 5</label>
             </div>
-            <select class="input-field" name="keyColor" required>
-                <option value="" disabled selected>Color Of Key</option>
-                <option value="red">red</option>
-                <option value="green">green</option>
-                <option value="blue">blue</option>
-                <option value="grey">grey</option>
-                <option value="purple">purple</option>
-                <option value="yellow">yellow</option>
+            // format of dropdown input
+            <select class="input-field" name="input6" required>
+                <option value="" disabled selected>input 6</option>
+                <option value="option1"> option 1 </option>
+                <option value="option2"> option 2 </option>
+                <option value="option3"> option 3 </option>
+                <option value="option4"> option 4 </option>
+                <option value="option5"> option 5 </option>
+                <option value="option6"> option 6 </option>
             </select>
-            <input class="input-field" type="text" name="doorPosition" placeholder="Position of Door" required>
-            <input class="input-field" type="text" name="stepsUntilKey" placeholder="Num of Steps Until Last Picked Key" required>
+            <input class="input-field" type="text" name="input7" placeholder="input 7" required>
+            <input class="input-field" type="text" name="input8" placeholder="input 8" required>
             <button type="submit" class="input-field submit-button">NEXT</button>
         </form>
     </div>

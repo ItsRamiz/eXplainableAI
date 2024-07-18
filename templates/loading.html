@@ -4,16 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: bold; /* Make text bold */
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: red;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold; /* Make text bold */
+        }
+        button:hover {
+            background-color: rgb(228, 13, 13);
+        }
+    </style>
 </head>
 <body>
     <div class="loading-container">
-        <h1>This environment isn't available yet</h1>
-        <button onclick="goToMainPage()">Return to Main Page</button>
+        <h1>THIS PAGE IS NOT AVAILABLE YET<br>:(((</h1>
+        <button onclick="goToMainPage()">RETURN TO MAIN PAGE</button>
     </div>
     <script>
         function goToMainPage() {
-            window.location.href = 'UI_System.html'; //this is the URL of the main page
+            window.location.href = "{{ url_for('index') }}"; // Using Flask's url_for function
         }
     </script>
 </body>

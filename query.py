@@ -821,12 +821,16 @@ def ui_system():
 def unlock_env():
     return render_template('UnlockEnv.html')
 
+@app.route('/crossing_lava_env')
+def crossing_lava_env():
+    return render_template('CrossingEnv.html')
+
 @app.route('/loading')
 def loading():
     return render_template('loading.html')
 
-@app.route('/submit', methods=['POST'])
-def submit():
+@app.route('/submit_unlock_env', methods=['POST'])
+def submit_unlock_env():
     if request.method == 'POST':
         try:
             # Sanitize input data
@@ -852,6 +856,34 @@ def submit():
             return f"Invalid input, please enter numeric values. Error: {e}"
     else:
         return "Request method is not POST"
+
+
+
+@app.route('/submit_crossing_env', methods=['POST'])
+def submit_crossing_env():
+    if request.method == 'POST':
+        try:
+            # Sanitize input data
+            min_duration = int(request.form['minDuration'].replace(',', ''))
+            max_steps = int(request.form['maxSteps'].replace(',', ''))
+            min_steps = int(request.form['minSteps'].replace(',', ''))
+            is_winner = 1 if 'isWinner' in request.form else 0
+            hit_a_wall = 1 if 'hitLava' in request.form else 0
+
+            # Collect user inputs
+            user_inputs = [min_duration, max_steps, min_steps, is_winner, hit_a_wall]
+
+            # Process the videos based on user inputs
+            process_videos_lava(user_inputs)
+
+            # Redirect to video.html page with list of processed videos
+            return redirect(url_for('video'))
+        except ValueError as e:
+            # Handle invalid input
+            return f"Invalid input, please enter numeric values. Error: {e}"
+    else:
+        return "Request method is not POST"
+
 
 @app.route('/video')
 def video():
@@ -992,6 +1024,146 @@ def process_videos(user_inputs):
         episode_id = video_info[0]
         output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
         extend_video(output_clip_path, extension_factor=2)
+
+def process_videos_lava(user_inputs):
+    video_dir = Path("static/videos/lava")
+    video_dir.mkdir(parents=True, exist_ok=True)
+    for video_file in video_dir.glob("*.mp4"):
+        video_file.unlink()
+
+    clips_dir = video_dir / "clips"
+    clips_dir.mkdir(parents=True, exist_ok=True)
+
+    env = gym.make('MiniGrid-LavaCrossingS9N1-v0', render_mode="rgb_array")
+    env = FlatObsWrapper(env)
+    env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: True)
+
+    model = PPO.load(path='agents/LavaCrossing.zip', env=env)
+
+    frame_rate = 15
+    values = [0, 1, 2, 3, 4, 5, 6, 10]
+    probabilities = [0.1, 0.1, 0.1, 0, 0.1, 0, 0, 0.6]
+    videos_to_extract = []
+    number_of_steps = 0
+
+
+    for episode_id in range(10):
+        first = None
+        end = None
+        v = [0, 0, 0, 0, 0]
+        curr_number_of_steps = 0
+        observation, info = env.reset()
+        video_saved = False
+ 
+        for step in range(10000):
+            number_of_steps += 1
+            curr_number_of_steps += 1
+
+            action, _states = model.predict(observation, deterministic=False)
+
+
+            observation, reward, terminated, truncated, info = env.step(action)
+
+            user_check = query_func_lava(user_inputs)
+
+            if user_check[1] == 1:
+                if curr_number_of_steps <= user_inputs[1]:
+                    v[0] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[0] = 0
+                    first = curr_number_of_steps
+                    v = [0, 0, 0, 0, 0]
+
+            if user_check[2] == 1:
+                if curr_number_of_steps >= user_inputs[2]:
+                    v[1] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[1] = 0
+                    first = curr_number_of_steps
+                    v = [0, 0, 0, 0, 0]
+
+            if user_check[3] == 1:
+                if reward() == 1:
+                    v[2] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[2] = 0
+            else:
+                if reward() == 0:
+                    v[2] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[2] = 0
+
+            if user_check[4] == 1:
+                if hit_lava(env):
+                    action = 0
+                    v[3] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[3] = 0
+            else:
+                if not hit_lava(env):
+                    v[3] = 1
+                    if first is None:
+                        first = curr_number_of_steps
+                else:
+                    v[3] = 0
+
+            v[4] = 0
+            if terminated or truncated:
+                isPickedKey = False
+                if all(v):
+                    if (curr_number_of_steps - first) >= (user_inputs[0] * frame_rate):
+                        end = curr_number_of_steps
+                        videos_to_extract.append((episode_id, first, end))
+                        video_saved = True
+                break
+
+        if not video_saved:
+            env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: False)
+
+    env.close()
+
+    for video_info in videos_to_extract:
+        episode_id, first, end = video_info
+        video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
+        start_time = first / frame_rate
+        end_time = end / frame_rate + 5
+        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
+        if video_path.exists():
+            ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
+            print(f"Video segment saved as {output_clip_path}")
+
+    for video_file in clips_dir.glob("*.mp4"):
+        convert_to_mp4(video_file)
+
+    for video_info in videos_to_extract:
+        episode_id = video_info[0]
+        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
+        extend_video(output_clip_path, extension_factor=2)
+
+def query_func_lava(user_inputs):
+    vector = []
+    vector.append(1 if user_inputs[0] > 0 and user_inputs[0] <= 5 else 0)
+    vector.append(1 if user_inputs[1] > 0 else 0)
+    vector.append(1 if user_inputs[2] > 0 else 0)
+    vector.append(1 if user_inputs[3] == 1 else 0)
+    vector.append(1 if user_inputs[4] == 1 else 0)
+    return vector
+
+def hit_lava(env):
+    agent_pos = tuple(env.agent_pos)
+    for obj in env.grid.grid:
+        if obj and obj.type == 'lava' and (obj.cur_pos[0], obj.cur_pos[1]) == agent_pos:
+            return True
 
 def query_func(user_inputs):
     vector = []

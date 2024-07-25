@@ -7,7 +7,7 @@ import sys
 
 import utils
 from utils import device
-from model import ACModel
+from others.model import ACModel
 
 
 # Parse arguments

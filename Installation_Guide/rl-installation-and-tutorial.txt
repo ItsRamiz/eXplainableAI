@@ -1,9 +1,9 @@
-Installing is quite easily done by navigating to rl-starter-files folder
+Installing is quite easily done by navigating to main project directory
 
 On Windows:
 
-1. Creating a new environment there and activating it
-2. pip install -r requirements.txt
+1. If you do not have a current working environment, create one and activating it
+2. Navigate to Installation_Guide directory and : pip install -r requirements.txt
 3. Install any missing libraries manually
 
 On Linux:

@@ -42,7 +42,7 @@ print(f"Device: {device}\n")
 # Load environment
 
 # render_mode="human" for rendering the environment 
-env = utils.make_env(args.env, args.seed)
+env = utils.make_env(args.env, args.seed, render_mode="human")
 for _ in range(args.shift):
     env.reset()
 print("Environment loaded\n")

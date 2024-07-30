@@ -39,7 +39,7 @@
             margin-bottom: 5px;
         }
         .form-group input, .form-group button, .form-group select, .form-group textarea {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin: 5px 0;
             border: none;
@@ -137,6 +137,10 @@
                 <label><input type="checkbox" name="addMemory"> Add Memory</label>
             </div>
             <h2>Enter Training Parameters</h2>
+            <div class="form-group">
+                <label for="agent-name">Agent Name</label>
+                <input type="text" id="agent-name" name="agentName" placeholder="Agent Name">
+            </div>
             <div class="parameters-container">
                 <div class="form-group">
                     <label for="seed">Seed</label>
@@ -186,10 +190,10 @@
                     <label for="max-norm">Max Norm of Gradient</label>
                     <input type="number" id="max-norm" name="maxNorm" placeholder="Max Norm of Gradient">
                 </div>
-                <div class="form-group">
-                    <label for="custom-command">Custom Training Command</label>
-                    <textarea id="custom-command" name="customCommand" rows="4" placeholder="Enter your custom training command"></textarea>
-                </div>
+            </div>
+            <div class="form-group">
+                <label for="custom-command">Custom Training Command</label>
+                <textarea id="custom-command" name="customCommand" rows="4" placeholder="Enter your custom training command"></textarea>
             </div>
             <div class="form-group">
                 <button type="submit" class="submit-button">TRAIN</button>

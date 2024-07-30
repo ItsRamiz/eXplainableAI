@@ -12,6 +12,7 @@ def submit_training_agent(request):
         data = {
             'environment': request.form.get('environment') or 'Unlock',
             'addMemory': request.form.get('addMemory') == 'on',
+            'agentName': request.form.get('agentName') or 'default_agent',
             'seed': request.form.get('seed') or 1,
             'processes': request.form.get('processes') or 16,
             'frames': request.form.get('frames') or 1,
@@ -50,7 +51,7 @@ def submit_training_agent(request):
 
         training_status['progress'] = 100
 
-        model_name = f"{data['environment']}_model"
+        model_name = f"{data['agentName']}_model"
 
         return jsonify(success=True, result=result, modelName=model_name)
 
@@ -64,7 +65,7 @@ def build_training_command(data):
         }
 
         environment = env_map.get(data['environment'], 'MiniGrid-Unlock-v0')
-        model_name = f"{data['environment']}_model"  
+        model_name = f"{data['agentName']}_model"  
 
         command = [
             'python', '-m', 'scripts.train',

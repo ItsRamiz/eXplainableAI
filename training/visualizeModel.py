@@ -12,10 +12,8 @@ def visualizeModelFunc(request):
 
     if environment == 'CrossingLava':
         env_name = 'MiniGrid-LavaCrossingS9N1-v0'
-        model_name = 'LavaCrossing'
     else:
         env_name = 'MiniGrid-Unlock-v0'
-        model_name = 'Unlock'
 
     command = [
         'python', '-m', 'scripts.visualize',

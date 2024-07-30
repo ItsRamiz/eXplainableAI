@@ -23,7 +23,8 @@ def submit_training_agent(request):
             'adamEpsilon': request.form.get('adamEpsilon') or 1e-8,
             'rmspropOptimizer': request.form.get('rmspropOptimizer') or 0.99,
             'timeSteps': request.form.get('timeSteps') or 1,
-            'maxNorm': request.form.get('maxNorm') or 0.5
+            'maxNorm': request.form.get('maxNorm') or 0.5,
+            'customCommand': request.form.get('customCommand') or None
         }
 
         data['seed'] = int(data['seed'])
@@ -54,36 +55,39 @@ def submit_training_agent(request):
         return jsonify(success=True, result=result, modelName=model_name)
 
 def build_training_command(data):
-    env_map = {
-        'Unlock': 'MiniGrid-Unlock-v0',
-        'CrossingLava': 'MiniGrid-LavaCrossingS9N1-v0'
-    }
+    if data['customCommand']:
+        command = data['customCommand'].split()
+    else:
+        env_map = {
+            'Unlock': 'MiniGrid-Unlock-v0',
+            'CrossingLava': 'MiniGrid-LavaCrossingS9N1-v0'
+        }
 
-    environment = env_map.get(data['environment'], 'MiniGrid-Unlock-v0')
-    model_name = f"{data['environment']}_model"  
+        environment = env_map.get(data['environment'], 'MiniGrid-Unlock-v0')
+        model_name = f"{data['environment']}_model"  
 
-    command = [
-        'python', '-m', 'scripts.train',
-        '--algo', 'ppo',
-        '--env', environment,
-        '--model', model_name,
-        '--save-interval', '100',
-        '--frames', str(data['frames']),
-        '--lr', str(data['learningRate']),
-        '--batch-size', str(data['batchSize']),
-        '--epochs', str(data['epochs']),
-        '--frames-per-proc', '128',
-        '--discount', str(data['discount']),
-        '--gae-lambda', '0.95',
-        '--entropy-coef', str(data['entropyCoef']),
-        '--value-loss-coef', '0.5',
-        '--max-grad-norm', str(data['maxNorm']),
-        '--clip-eps', '0.2',
-        '--procs', str(data['processes'])
-    ]
+        command = [
+            'python', '-m', 'scripts.train',
+            '--algo', 'ppo',
+            '--env', environment,
+            '--model', model_name,
+            '--save-interval', '100',
+            '--frames', str(data['frames']),
+            '--lr', str(data['learningRate']),
+            '--batch-size', str(data['batchSize']),
+            '--epochs', str(data['epochs']),
+            '--frames-per-proc', '128',
+            '--discount', str(data['discount']),
+            '--gae-lambda', '0.95',
+            '--entropy-coef', str(data['entropyCoef']),
+            '--value-loss-coef', '0.5',
+            '--max-grad-norm', str(data['maxNorm']),
+            '--clip-eps', '0.2',
+            '--procs', str(data['processes'])
+        ]
 
-    if data.get('seed'):
-        command += ['--seed', str(data['seed'])]
+        if data.get('seed'):
+            command += ['--seed', str(data['seed'])]
 
     return command
 

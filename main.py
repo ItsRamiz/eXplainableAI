@@ -18,6 +18,11 @@ def index():
 def XAI_system():
     return render_template('XAI_System.html')
 
+@app.route('/XAI_system2')
+def XAI_system2():
+    return render_template('XAI_System_full.html')
+
+
 @app.route('/unlock_env')
 def unlock_env():
     return render_template('UnlockEnv.html')

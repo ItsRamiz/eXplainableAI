@@ -12,18 +12,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            height: 100vh;
             margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
         .container {
             text-align: center;
             background-color: #333;
             padding: 20px;
             border-radius: 10px;
-            width: 100%;
-            max-width: 900px;
+            width: 100vw;
+            height: 100vh;
             overflow: auto;
+            box-sizing: border-box;
+            position: relative;
         }
         h1 {
             margin: 0 0 20px;
@@ -48,10 +51,33 @@
             height: auto;
             border-radius: 5px;
         }
+        .top-left-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #444;
+            color: #777;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .top-left-button:hover {
+            background-color: #666;
+        }
+        .top-left-button:before {
+            content: "\25A0"; 
+            font-size: 1.5em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <button class="top-left-button" onclick="location.href='{{ url_for('XAI_system2') }}'"></button>
         <h1>XAI SYSTEM</h1>
         <div class="grid">
             <div class="grid-item" onclick="location.href='{{ url_for('unlock_env') }}'">

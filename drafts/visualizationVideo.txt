@@ -1,0 +1,396 @@
+######################################## main.py
+from flask import Flask, render_template, request, jsonify, send_from_directory
+from pathlib import Path
+from environments.unlock_env import submit_unlock_env
+from environments.crossing_lava_env import submit_crossing_env
+from training.visualizeModel import visualizeModelFunc, kill_process
+from training.trainingParameters import submit_training_agent, training_status_func
+
+app = Flask(__name__, template_folder='templates', static_folder='static')
+
+# Main page
+@app.route('/')
+def index():
+    return render_template('MAIN.html')
+
+# XAI routes
+@app.route('/XAI_system')
+def XAI_system():
+    return render_template('XAI_System.html')
+
+@app.route('/unlock_env')
+def unlock_env():
+    return render_template('UnlockEnv.html')
+
+@app.route('/submit_unlock', methods=['POST'])
+def submit_unlock():
+    return submit_unlock_env(request)
+
+@app.route('/crossing_lava_env')
+def crossing_lava_env():
+    return render_template('CrossingEnv.html')
+
+@app.route('/submit_crossinglava', methods=['POST'])
+def submit_crossinglava():
+    return submit_crossing_env(request)
+
+@app.route('/video')
+def video():
+    video_dir = Path("static/videos")
+    video_files = [str(video.relative_to("static")) for video in video_dir.glob("*.mp4")]
+    return render_template('video.html', videos=video_files)
+
+# Loading route
+@app.route('/loading')
+def loading():
+    return render_template('loading.html')
+
+# Training routes
+@app.route('/training')
+def training():
+    return render_template('modelTraining.html')
+
+@app.route('/submit_training', methods=['POST'])
+def submit_training():
+    return submit_training_agent(request)
+
+@app.route('/training_process')
+def training_process():
+    return render_template('trainingProcess.html')
+
+@app.route('/training_status')
+def training_status():
+    return training_status_func()
+
+@app.route('/visualize', methods=['POST'])
+def visualize():
+    return visualizeModelFunc(request)
+
+@app.route('/kill_display', methods=['POST'])
+def kill_display():
+    return kill_process()
+
+@app.route('/visualizePage')
+def visualizePage():
+    return render_template('visualizationVideo.html')
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+
+######################################## scripts\visualize.py:
+import argparse
+import numpy as np
+import gymnasium as gym
+import utils
+from utils import device
+import os
+
+# Parse arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--env", required=True, help="name of the environment to be run (REQUIRED)")
+parser.add_argument("--model", required=True, help="name of the trained model (REQUIRED)")
+parser.add_argument("--seed", type=int, default=0, help="random seed (default: 0)")
+parser.add_argument("--shift", type=int, default=0, help="number of times the environment is reset at the beginning (default: 0)")
+parser.add_argument("--argmax", action="store_true", default=False, help="select the action with highest probability (default: False)")
+parser.add_argument("--pause", type=float, default=0.1, help="pause duration between two consequent actions of the agent (default: 0.1)")
+parser.add_argument("--gif", type=str, default=None, help="store output as gif with the given filename")
+parser.add_argument("--video", type=str, default="static/output_video.mp4", help="store output as video with the given filename")
+parser.add_argument("--episodes", type=int, default=3, help="number of episodes to visualize")
+parser.add_argument("--memory", action="store_true", default=False, help="add a LSTM to the model")
+parser.add_argument("--text", action="store_true", default=False, help="add a GRU to the model")
+
+
+args = parser.parse_args()
+
+# Set seed for all randomness sources
+utils.seed(args.seed)
+
+# Set device
+print(f"Device: {device}\n")
+
+# Load environment
+env = utils.make_env(args.env, args.seed, render_mode="rgb_array")
+env = gym.wrappers.RecordVideo(env, video_folder='static', video_length=20000)
+
+for _ in range(args.shift):
+    env.reset()
+print("Environment loaded\n")
+
+# Load agent
+model_dir = utils.get_model_dir(args.model)
+agent = utils.Agent(env.observation_space, env.action_space, model_dir, argmax=args.argmax, use_memory=args.memory, use_text=args.text)
+print("Agent loaded\n")
+
+# Run the agent
+for episode in range(args.episodes):
+    obs, _ = env.reset()
+    done = False
+
+    while not done:
+        action = agent.get_action(obs)
+        obs, reward, terminated, truncated, _ = env.step(action)
+        done = terminated or truncated
+        agent.analyze_feedback(reward, done)
+        env.render()
+
+env.close()
+print("Video saved.")
+
+# Rename the video to the desired output filename
+if os.path.exists(args.video):
+    os.remove(args.video)
+os.rename('static/rl-video-episode-0.mp4', args.video)
+
+
+######################################### training/visualizeModel.py
+import subprocess
+from flask import request, jsonify
+
+visualization_process = None
+
+def visualizeModelFunc(request):
+    global visualization_process
+    environment = request.form.get('environment')
+    model = request.form.get('model')
+
+    print(f"Environment: {environment}, Model: {model}")
+
+    if environment == 'CrossingLava':
+        env_name = 'MiniGrid-LavaCrossingS9N1-v0'
+        model_name = 'LavaCrossing'
+    else:
+        env_name = 'MiniGrid-Unlock-v0'
+        model_name = 'Unlock'
+
+    command = [
+        'python', '-m', 'scripts.visualize',
+        '--env', env_name,
+        '--model', model,
+        '--video', 'static/visualization_video.mp4'
+    ]
+
+    print(f"Running command: {' '.join(command)}")
+
+    try:
+        visualization_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = visualization_process.communicate()
+        print(stdout.decode())
+        if visualization_process.returncode != 0:
+            print(stderr.decode())
+            return jsonify(success=False, message="Error during visualization"), 500
+        return jsonify(success=True)
+    except Exception as e:
+        print(f"Error running command: {e}")
+        return jsonify(success=False, message=str(e)), 500
+
+
+# not used currently
+def kill_process():
+    global visualization_process
+    if visualization_process:
+        visualization_process.terminate()
+        visualization_process = None
+        return jsonify(success=True, message="Visualization process terminated")
+    else:
+        return jsonify(success=False, message="No visualization process running")
+    
+
+######################################### templates/trainingProcess.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Process</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+NewRoman:wght@400;700&display=swap');
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .container {
+            width: 80%;
+            height: 90%;
+            border: 2px solid #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #777;
+        }
+        .title {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .loading-bar {
+            height: 30px;
+            background-color: #333;
+        }
+        .loading-bar-inner {
+            height: 100%;
+            width: 0;
+            background-color: #4caf50;
+            transition: width 0.5s;
+        }
+    </style>
+    <script>
+        async function checkTrainingStatus() {
+            const response = await fetch('/training_status');
+            const data = await response.json();
+            const loadingBarInner = document.querySelector('.loading-bar-inner');
+            loadingBarInner.style.width = `${data.progress}%`;
+            if (data.progress < 100) {
+                setTimeout(checkTrainingStatus, 1000);
+            } else {
+                alert('Training Complete!');
+            }
+        }
+
+        function visualizeModel() {
+            const environment = sessionStorage.getItem('selectedEnvironment');
+            const model = sessionStorage.getItem('trainedModel');
+            const formData = new FormData();
+            formData.append('environment', environment);
+            formData.append('model', model);
+
+            fetch('/visualize', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/visualizePage';
+                } else {
+                    alert('Visualization failed.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkTrainingStatus();
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Training Process</h1>
+        <div class="form-group loading-bar">
+            <div class="loading-bar-inner"></div>
+        </div>
+        <div class="form-group">
+            <button onclick="visualizeModel()">Visualize Trained Model</button>
+        </div>
+    </div>
+</body>
+</html>
+
+
+######################################### templates/visualizationVideo.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+NewRoman:wght@400;700&display=swap');
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .container {
+            width: 80%;
+            height: 90%;
+            border: 2px solid #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #777;
+        }
+        .title {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .video-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            border: 2px solid #fff;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoElement = document.getElementById('visualizationVideo');
+            videoElement.src = '/static/visualization_video.mp4';
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Visualization</h1>
+        <div class="video-container">
+            <video id="visualizationVideo" controls></video>
+        </div>
+        <div class="form-group">
+            <button onclick="window.location.href='/'">Return to Main Page</button>
+        </div>
+    </div>
+</body>
+</html>

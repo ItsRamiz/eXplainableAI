@@ -42,7 +42,7 @@ print(f"Device: {device}\n")
 # Load environment
 
 # render_mode="human" for rendering the environment 
-env = utils.make_env(args.env, args.seed,render_mode="human")
+env = utils.make_env(args.env, args.seed, render_mode="human")
 for _ in range(args.shift):
     env.reset()
 print("Environment loaded\n")
@@ -56,10 +56,10 @@ print("Agent loaded\n")
 
 # Run the agent
 
-#if args.gif:
-    #from array2gif import write_gif
+if args.gif:
+    from array2gif import write_gif
 
-frames = []
+    frames = []
 
 # Create a window to view the environment
 env.render()
@@ -80,9 +80,7 @@ for episode in range(args.episodes):
         if done:
             break
 
-
-# Used for conversion to gif - Currently not important
-#if args.gif:
-    #print("Saving gif... ", end="")
-    #write_gif(numpy.array(frames), args.gif+".gif", fps=1/args.pause)
-    #print("Done.")
+if args.gif:
+    print("Saving gif... ", end="")
+    write_gif(numpy.array(frames), args.gif+".gif", fps=1/args.pause)
+    print("Done.")

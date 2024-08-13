@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Training</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;700&display=swap');
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        .checkbox-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group button, .form-group select, .form-group textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        .form-group button {
+            background-color: #555;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #777;
+        }
+        .parameters-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .parameters-container .form-group {
+            flex: 1 1 45%;
+            margin: 20px;
+        }
+        .submit-button {
+            background-color: #fff;
+            color: #000;
+            font-weight: bold;
+        }
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .image-container img {
+            width: 50%;
+            height: auto;
+        }
+        .title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function updateImage() {
+            const envSelect = document.getElementById('env-select');
+            const image = document.getElementById('env-image');
+            const selectedEnv = envSelect.value;
+
+            sessionStorage.setItem('selectedEnvironment', selectedEnv);
+
+            const envImages = {
+                'Unlock': 'static/images/UnlockEnv.gif',
+                'CrossingLava': 'static/images/CrossingEnv.gif',
+            };
+
+            image.src = envImages[selectedEnv] || 'static/images/loading.gif';
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('training-form'));
+
+            fetch('/submit_training', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    sessionStorage.setItem('trainedModel', data.modelName);  // Store the model name returned by the server
+                    window.location.href = "/training_process";
+                } else {
+                    alert('There was an error submitting the form');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Model Training</h1>
+        <form id="training-form" onsubmit="submitForm(event)">
+            <div class="form-group">
+                <label for="env-select">Choose Environment</label>
+                <select id="env-select" name="environment" onchange="updateImage()">
+                    <option value="">Select Environment</option>
+                    <option value="Unlock">Unlock</option>
+                    <option value="CrossingLava">Crossing Lava</option>
+                </select>
+            </div>
+            <div class="image-container">
+                <img id="env-image" src="static/images/loading.gif" alt="Environment Image">
+            </div>
+            <div class="checkbox-container">
+                <label><input type="checkbox" name="addMemory"> Add Memory</label>
+            </div>
+            <h2>Enter Training Parameters</h2>
+            <div class="form-group">
+                <label for="agent-name">Agent Name</label>
+                <input type="text" id="agent-name" name="agentName" placeholder="Agent Name">
+            </div>
+            <div class="parameters-container">
+                <div class="form-group">
+                    <label for="seed">Seed</label>
+                    <input type="number" id="seed" name="seed" placeholder="Seed">
+                </div>
+                <div class="form-group">
+                    <label for="processes">Number of Processes</label>
+                    <input type="number" id="processes" name="processes" placeholder="Number of Processes">
+                </div>
+                <div class="form-group">
+                    <label for="frames">Number of Frames</label>
+                    <input type="number" id="frames" name="frames" placeholder="Number of Frames">
+                </div>
+                <div class="form-group">
+                    <label for="epochs">ePochs</label>
+                    <input type="number" id="epochs" name="epochs" placeholder="ePochs">
+                </div>
+                <div class="form-group">
+                    <label for="batch-size">Batch Size</label>
+                    <input type="number" id="batch-size" name="batchSize" placeholder="Batch Size">
+                </div>
+                <div class="form-group">
+                    <label for="discount">Discount</label>
+                    <input type="number" id="discount" name="discount" placeholder="Discount">
+                </div>
+                <div class="form-group">
+                    <label for="learning-rate">Learning Rate</label>
+                    <input type="number" id="learning-rate" name="learningRate" placeholder="Learning Rate">
+                </div>
+                <div class="form-group">
+                    <label for="entropy-coef">Entropy Coef</label>
+                    <input type="number" id="entropy-coef" name="entropyCoef" placeholder="Entropy Coef">
+                </div>
+                <div class="form-group">
+                    <label for="adam-epsilon">Optimizer Adam Epsilon</label>
+                    <input type="number" id="adam-epsilon" name="adamEpsilon" placeholder="Optimizer Adam Epsilon">
+                </div>
+                <div class="form-group">
+                    <label for="rmsprop-optimizer">RMSprop Optimizer Alpha</label>
+                    <input type="number" id="rmsprop-optimizer" name="rmspropOptimizer" placeholder="RMSprop Optimizer">
+                </div>
+                <div class="form-group">
+                    <label for="time-steps">Number of Time-steps Backpropagate</label>
+                    <input type="number" id="time-steps" name="timeSteps" placeholder="Number of Time-steps Backpropagate">
+                </div>
+                <div class="form-group">
+                    <label for="max-norm">Max Norm of Gradient</label>
+                    <input type="number" id="max-norm" name="maxNorm" placeholder="Max Norm of Gradient">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="custom-command">Custom Training Command</label>
+                <textarea id="custom-command" name="customCommand" rows="4" placeholder="Enter your custom training command"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="submit-button">TRAIN</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page - XAI System</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin: 0 0 20px;
+            font-size: 5em;
+            position: fixed;
+            top: 20px;
+        }
+        .image-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60%;
+            height: 60%;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .image-title {
+            font-size: 2em;
+            margin-top: 300px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        .image-description {
+            font-size: 1em;
+            margin-top: 15px;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        /* .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 20%;
+        }
+        .button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.5em;
+        } */
+        .buttons {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.5em;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .top-left-grid-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            padding: 5px;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+        .top-left-grid-button div {
+            background-color: #666;
+            width: 100%;
+            height: 100%;
+        }
+        .top-left-grid-button:hover {
+            background-color: #555;
+        }
+        .top-left-grid-button:hover div {
+            background-color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="top-left-grid-button" onclick="location.href='{{ url_for('XAI_system') }}'">
+            <div></div><div></div><div></div>
+            <div></div><div></div><div></div>
+            <div></div><div></div><div></div>
+        </button>
+        <h1>XAI SYSTEM</h1>
+        <div class="image-container">
+            <div class="image-title" id="image-title">Environment 1</div>
+            <img id="main-image" src="{{ url_for('static', filename='images/UnlockEnv.gif') }}" alt="Environment 1" onclick="navigateToEnv()">
+            <div class="image-description" id="image-description">Description for Environment 1</div>
+        </div>
+        <div class="buttons">
+            <button class="button" onclick="prevImage()">←</button>
+            <button class="button" onclick="nextImage()">→</button>
+        </div>
+    </div>
+
+    <script>
+        const images = [
+            {src: "{{ url_for('static', filename='images/UnlockEnv.gif') }}", title: "Unlock Environment", description: "The agent has to open a locked door.", link: "{{ url_for('unlock_env') }}"},
+            {src: "{{ url_for('static', filename='images/RedBlueDoorEnv.gif') }}", title: "Red Blue Door Environment", description: "The agent has to open the red door and then open the blue door, in that order.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/ObstructedMaze_1Dlhb.gif') }}", title: "Obstructed Maze Environment", description: "A blue ball is hidden in a maze. A locked door separates rooms. Doors are obstructed by a ball and keys are hidden in boxes.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/MemoryEnv.gif') }}", title: "Memory Environment", description: "This environment is a memory test. The agent starts in a small room where it sees an object. It then has to go through a narrow hallway which ends in a split. At each end of the split there is an object, one of which is the same as the object in the starting room. The agent has to remember the initial object, and go to the matching object at split.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/KeyCorridorEnv.gif') }}", title: "Key Corridor Environment", description: "The agent has to pick up an object which is behind a locked door. The key is hidden in another room, and the agent has to explore the environment to find it.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/GoToDoorEnv.gif') }}", title: "Go To Door Environment", description: "This environment is a room with four doors, one on each wall. The agent receives a textual (mission) string as input, telling it which door to go to.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/DoorKeyEnv.gif') }}", title: "Door Key Environment", description: "This environment has a key that the agent must pick up in order to unlock a door and then get to the green goal square.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/CrossingEnv.gif') }}", title: "Crossing Environment", description: "Each lava stream runs across the room either horizontally or vertically, and has a single crossing point which can be safely used.", link: "{{ url_for('crossing_lava_env') }}"},
+            {src: "{{ url_for('static', filename='images/BlockedUnlockPickupEnv.gif') }}", title: "Blocked Unlock Pickup Environment", description: "The agent has to pick up a box which is placed in another room, behind a locked door. The door is also blocked by a ball which the agent has to move before it can unlock the door.", link: "{{ url_for('loading') }}"}
+        ];
+
+        let currentIndex = 0;
+
+        function updateImage() {
+            document.getElementById('main-image').src = images[currentIndex].src;
+            document.getElementById('image-title').innerText = images[currentIndex].title;
+            document.getElementById('image-description').innerText = images[currentIndex].description;
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+            updateImage();
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+            updateImage();
+        }
+
+        function navigateToEnv() {
+            window.location.href = images[currentIndex].link;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateImage();
+        });
+    </script>
+</body>
+</html>

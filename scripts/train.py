@@ -69,7 +69,9 @@ if __name__ == "__main__":
     # Load environments
     envs = []
     for i in range(args.procs):
-        envs.append(utils.make_env(args.env, args.seed + 10000 * i))
+        customEnv = 0
+        isTrain = 1
+        envs.append(utils.make_env(args.env, args.seed + 10000 * i, customEnv=customEnv,isTrain = 1))
     txt_logger.info("Environments loaded\n")
 
     # Load training status

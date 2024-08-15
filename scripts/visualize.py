@@ -41,8 +41,12 @@ print(f"Device: {device}\n")
 
 # Load environment
 
-# render_mode="human" for rendering the environment 
-env = utils.make_env(args.env, args.seed, render_mode="human")
+# render_mode="human" for rendering the environment
+
+customEnv = 0
+isTrain = 0
+
+env = utils.make_env(args.env, args.seed, render_mode="human", customEnv=customEnv, isTrain=isTrain)
 for _ in range(args.shift):
     env.reset()
 print("Environment loaded\n")
@@ -64,7 +68,10 @@ if args.gif:
 # Create a window to view the environment
 env.render()
 
+print("Passed Render Mode")
+
 for episode in range(args.episodes):
+    print("Episode Started")
     obs, _ = env.reset()
 
     while True:

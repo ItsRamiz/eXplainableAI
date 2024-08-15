@@ -9,7 +9,7 @@ from minigrid.manual_control import ManualControl
 from pathlib import Path
 import moviepy.editor as mp
 
-from others.custom_environment_test import createCustomEnv
+from others.customEnvironmentBuilder import createCustomEnv
 
 # Create the video directory
 video_dir = Path("videos")

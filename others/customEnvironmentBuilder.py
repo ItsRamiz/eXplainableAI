@@ -3,7 +3,7 @@ from __future__ import annotations
 from minigrid.core.constants import COLOR_NAMES
 from minigrid.core.grid import Grid
 from minigrid.core.mission import MissionSpace
-from minigrid.core.world_object import Door, Goal, Key, Wall
+from minigrid.core.world_object import Door, Goal, Key, Wall, Lava
 from minigrid.manual_control import ManualControl
 from minigrid.minigrid_env import MiniGridEnv
 
@@ -11,7 +11,7 @@ from minigrid.minigrid_env import MiniGridEnv
 class SimpleEnv(MiniGridEnv):
     def __init__(
             self,
-            size=10,
+            size=5,
             agent_start_pos=(1, 1),
             agent_start_dir=0,
             max_steps: int | None = None,
@@ -45,21 +45,24 @@ class SimpleEnv(MiniGridEnv):
         # Generate the surrounding walls
         self.grid.wall_rect(0, 0, width, height)
 
+
         # Generate vertical separation wall
         for i in range(0, height):
-            self.grid.set(6, i, Wall())
+            self.grid.set(2, i, Wall())
 
-        self.grid.set(2,3,Wall())
-        self.grid.set(3,3,Wall())
-        self.grid.set(5, 3, Wall())
-        self.grid.set(5, 4, Wall())
+        #self.grid.set(2,3,Wall())
+        #self.grid.set(3,3,Wall())
+        #self.grid.set(5, 3, Wall())
+        #self.grid.set(5, 4, Wall())
 
-        self.grid.set(2,5,Wall())
-        self.grid.set(3,5,Wall())
+        #self.grid.set(2,5,Wall())
+        #self.grid.set(3,5,Wall())
 
         # Place the door and key
-        self.grid.set(6, 6, Door(COLOR_NAMES[0], is_locked=True))
-        self.grid.set(3, 6, Key(COLOR_NAMES[0]))
+        #self.grid.set(2, 2, Door(COLOR_NAMES[0], is_locked=True))
+        self.grid.set(1, 3, Key(COLOR_NAMES[0]))
+
+        self.grid.set(2,2,Lava())
 
         # Place a goal square in the bottom-right corner
         self.put_obj(Goal(), width - 2, height - 2)

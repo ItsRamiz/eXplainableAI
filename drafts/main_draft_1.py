@@ -10,7 +10,7 @@ from minigrid.core.world_object import Door, Goal, Key, Wall
 from minigrid.manual_control import ManualControl
 
 import others.query as query
-from others.custom_environment_test import createCustomEnv
+from others.customEnvironmentBuilder import createCustomEnv
 def get_key_color(self):
     for x in range(self.grid.width):
         for y in range(self.grid.height):

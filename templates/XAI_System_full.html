@@ -147,13 +147,12 @@
             <button class="button" onclick="nextImage()">→</button>
         </div>
     </div>
-
     <script>
         const images = [
             {src: "{{ url_for('static', filename='images/UnlockEnv.gif') }}", title: "Unlock Environment", description: "The agent has to open a locked door.", link: "{{ url_for('unlock_env') }}"},
             {src: "{{ url_for('static', filename='images/RedBlueDoorEnv.gif') }}", title: "Red Blue Door Environment", description: "The agent has to open the red door and then open the blue door, in that order.", link: "{{ url_for('loading') }}"},
             {src: "{{ url_for('static', filename='images/ObstructedMaze_1Dlhb.gif') }}", title: "Obstructed Maze Environment", description: "A blue ball is hidden in a maze. A locked door separates rooms. Doors are obstructed by a ball and keys are hidden in boxes.", link: "{{ url_for('loading') }}"},
-            {src: "{{ url_for('static', filename='images/MemoryEnv.gif') }}", title: "Memory Environment", description: "This environment is a memory test. The agent starts in a small room where it sees an object. It then has to go through a narrow hallway which ends in a split. At each end of the split there is an object, one of which is the same as the object in the starting room. The agent has to remember the initial object, and go to the matching object at split.", link: "{{ url_for('loading') }}"},
+            {src: "{{ url_for('static', filename='images/DynamicObstaclesEnv.gif') }}", title: "Dynamic Obstacles Environment", description: "This environment is an empty room with moving obstacles. The goal of the agent is to reach the green goal square without colliding with any obstacle. A large penalty is subtracted if the agent collides with an obstacle and the episode finishes. This environment is useful to test Dynamic Obstacle Avoidance for mobile robots with Reinforcement Learning in Partial Observability.", link: "{{ url_for('dynamicObstacles_env') }}"},
             {src: "{{ url_for('static', filename='images/KeyCorridorEnv.gif') }}", title: "Key Corridor Environment", description: "The agent has to pick up an object which is behind a locked door. The key is hidden in another room, and the agent has to explore the environment to find it.", link: "{{ url_for('loading') }}"},
             {src: "{{ url_for('static', filename='images/GoToDoorEnv.gif') }}", title: "Go To Door Environment", description: "This environment is a room with four doors, one on each wall. The agent receives a textual (mission) string as input, telling it which door to go to.", link: "{{ url_for('loading') }}"},
             {src: "{{ url_for('static', filename='images/DoorKeyEnv.gif') }}", title: "Door Key Environment", description: "This environment has a key that the agent must pick up in order to unlock a door and then get to the green goal square.", link: "{{ url_for('loading') }}"},

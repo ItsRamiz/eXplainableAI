@@ -114,3 +114,5 @@ class ParallelEnv(gym.Env):
         raise NotImplementedError
 '''
 
+pip install array2gif
+

@@ -3,6 +3,7 @@ import subprocess
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 from pathlib import Path
 
+from environments.dynamic_obstacles_env import submit_DynamicObstaclesEnv
 from environments.unlock_env import submit_unlock_env
 from environments.crossing_lava_env import submit_crossing_env
 from agents.visualizeModel import visualizeModelFunc, kill_process
@@ -43,6 +44,14 @@ def crossing_lava_env():
 @app.route('/submit_crossinglava', methods=['POST'])
 def submit_crossinglava():
     return submit_crossing_env(request)
+
+@app.route('/dynamicObstacles_env')
+def dynamicObstacles_env():
+    return render_template('DynamicObstacles.html')
+
+@app.route('/submit_DynamicObstacles', methods=['POST'])
+def submit_DynamicObstacles():
+    return submit_DynamicObstaclesEnv(request)
 
 @app.route('/video')
 def video():

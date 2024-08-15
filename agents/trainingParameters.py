@@ -41,7 +41,7 @@ def submit_training_agent(request):
         data['timeSteps'] = int(data['timeSteps'])
         data['maxNorm'] = float(data['maxNorm'])
 
-        with open('training/training_data.json', 'w') as f:
+        with open('agents/training_data.json', 'w') as f:
             json.dump(data, f)
 
         command = build_training_command(data)

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Obstacles Env</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2em;
+            margin: 5px 0;
+            margin-bottom: 50px;
+            margin-top: 500px;
+        }
+        h2 {
+            font-size: 5em;
+            margin: 5px 0;
+            margin-bottom: 50px;
+            margin-top:  50px;
+        }
+        .image-container {
+            margin-bottom: 50px;
+        }
+        .input-field, select {
+            display: block;
+            width: 50%;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .input-field:hover, select:hover {
+            background-color: #555;
+        }
+        .submit-button {
+            background-color: #222;
+        }
+        .submit-button:hover {
+            background-color: #333;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .checkbox-container label {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="input-field" onclick="history.back()">Back</button>
+        <h1>Enter your requirements for obtaining the videos to investigate the agent's behaviors</h1>
+        <h2>Dynamic Obstacles Environment</h2>
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/DynamicObstacleGif.gif') }}" alt="Environment Image" width="50%">
+        </div>
+        <form action="/submit_DynamicObstacles" method="POST">
+            <input class="input-field" type="text" name="minDuration" placeholder="Min Duration of Video" required>
+            <input class="input-field" type="text" name="maxSteps" placeholder="Max Num Of Steps" required>
+            <input class="input-field" type="text" name="minSteps" placeholder="Min Num Of Steps" required>
+            <div class="checkbox-container">
+                <input type="checkbox" id="isWinner" name="isWinner">
+                <label for="isWinner">Is Winner</label>
+            </div>
+            <button type="submit" class="input-field submit-button">NEXT</button>
+        </form>
+    </div>
+</body>
+</html>

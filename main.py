@@ -1,6 +1,6 @@
 import os
 import subprocess
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask, json, jsonify, render_template, request, redirect, url_for, flash
 from pathlib import Path
 
 from environments.dynamic_obstacles_env import submit_DynamicObstaclesEnv
@@ -14,6 +14,8 @@ app = Flask(__name__, template_folder='templates')
 app.secret_key = 'your_secret_key'  # Required for flash messages
 
 visualization_process = None  # Global variable to store the subprocess
+# Define the path to save the environment data file
+env_data_path = os.path.join(app.root_path, 'environment.json')
 
 # Main page
 @app.route('/')
@@ -104,6 +106,30 @@ def kill_display_func():
 @app.route('/get_folders', methods=['GET'])
 def get_folders():
     return getFolders()
+
+@app.route('/CustomEnvPage')
+def CustomEnvPage():
+    return render_template('CustomEnv.html')
+
+
+@app.route('/trainCustomEnvPage')
+def trainCustomEnvPage():
+    return render_template('trainCustomEnv.html')
+
+# Ensure this route is defined only once in your entire application
+@app.route('/save-environment', methods=['POST'])
+def save_environment():
+    data = request.json
+    with open(env_data_path, 'w') as file:
+        json.dump(data, file)
+
+    return jsonify({"status": "success", "message": "Environment saved!"})
+
+@app.route('/load-environment', methods=['GET'])
+def load_environment():
+    with open(env_data_path, 'r') as file:
+        data = json.load(file)
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -156,6 +156,7 @@
     <div class="menu-bar">
         <a href="#home">Home</a>
         <a href="#about">About</a>
+        <a href="{{ url_for('XAI_system') }}">XAI System</a>
         <div class="dropdown">
             <a href="javascript:void(0)" class="dropbtn">Agents</a>
             <div class="dropdown-content">
@@ -163,7 +164,6 @@
                 <a href="{{ url_for('visualizePage') }}">Visualize</a>
             </div>
         </div>
-        <a href="{{ url_for('XAI_system') }}">XAI System</a>
         <a href="{{ url_for('CustomEnvPage') }}">Custom Environment</a>
         <a href="#contact">Contact Us</a>
     </div>
@@ -208,17 +208,17 @@
     <div class="section" id="contact">
         <h2>Contact Us</h2>
         <div class="contributor">
-            <img src="{{ url_for('static', filename='images/user.png') }}" alt="Aisha">
+            <img src="{{ url_for('static', filename='images/contactPage/user.png') }}" alt="Aisha">
             <div class="contributor-details">
                 <p>Aisha Abu dahesh</p>
-                <p><img src="{{ url_for('static', filename='images/gmail.png') }}" alt="Gmail"> ....................@gmail.com</p>
+                <p><img src="{{ url_for('static', filename='images/contactPage/gmail.png') }}" alt="Gmail"> ....................@gmail.com</p>
             </div>
         </div>
         <div class="contributor">
-            <img src="{{ url_for('static', filename='images/user.png') }}" alt="Ramiz">
+            <img src="{{ url_for('static', filename='images/contactPage/user.png') }}" alt="Ramiz">
             <div class="contributor-details">
                 <p>Ramiz Srour</p>
-                <p><img src="{{ url_for('static', filename='images/gmail.png') }}" alt="Gmail"> ....................@gmail.com</p>
+                <p><img src="{{ url_for('static', filename='images/contactPage/gmail.png') }}" alt="Gmail"> ....................@gmail.com</p>
             </div>
         </div>
     </div>

@@ -53,7 +53,7 @@ def submit_unlock_env(request):
                 'agentType'] else 'unknown'
 
             if agent_type == 'ppo':
-                agent_model_path = Path(r'storage\model.zip')
+                agent_model_path = Path(r'storage\Unlockenv')
             elif agent_type == 'rl_starter':
                 agent_model_path = Path(r'storage\Unlockenv')
             else:
@@ -77,26 +77,19 @@ def submit_unlock_env(request):
     else:
         return "Request method is not POST"
 
-
-def query_unlock(user_inputs):
-    vector = []
-    vector.append(1 if user_inputs[0] > 0 and user_inputs[0] <= 5 else 0)
-    vector.append(1 if user_inputs[1] > 0 else 0)
-    vector.append(1 if user_inputs[2] > 0 else 0)
-    vector.append(1 if user_inputs[3] == 1 else 0)
-    vector.append(1 if user_inputs[4] == 1 else 0)
-    vector.append(1 if user_inputs[5] > 0 and user_inputs[5] <= 5 else 0)
-    vector.append(1 if user_inputs[6] in ["red", "green", "blue", "purple", "yellow", "grey"] else 0)
-    return vector
-
-
-def checkGameState(numberSteps, isWinner, isHitWall, KeyColor, MaxStepUntilKey, user_inputs):
+def checkGameState(user_inputs,numberSteps, isWinner, isHitWall, KeyColor, MaxStepUntilKey):
     # [min_duration, max_steps, min_steps, is_winner, hit_a_wall, door_position, key_color, max_steps_until_key]
     #      0           1          2           3         4             5          6          7
     #   IGNORED                                                     IGNORED
+    #print("Inputs = " , user_inputs)
+    #print("Steps = " , numberSteps)
+    #print("IsWinner = " , isWinner)
+    #print("hitWall = " , isHitWall)
+    #print("Key Color = " , KeyColor)
+    #print("MaxStepUKey = " , MaxStepUntilKey)
 
-    if numberSteps <= user_inputs[1] and isWinner == user_inputs[3] and isHitWall == user_inputs[4] and KeyColor == \
-            user_inputs[6] and MaxStepUntilKey <= user_inputs[7]:
+    if numberSteps <= user_inputs[1] and isWinner == user_inputs[3] and isHitWall == user_inputs[4] and (KeyColor == user_inputs[6] or user_inputs[6] == 'unknown') and MaxStepUntilKey <= user_inputs[7]:
+        #print("Used!!")
         return True
     else:
         return False
@@ -110,17 +103,26 @@ def process_videos_unlock(user_inputs, agent_type,
     for video_file in video_dir.glob("*.mp4"):
         video_file.unlink()
 
-    clips_dir = video_dir / "clips"
-    clips_dir.mkdir(parents=True, exist_ok=True)
+    for video_file in video_dir.glob("*.meta.json"):
+        video_file.unlink()
 
-    if agent_type == 'ppo':
-        env = gym.make('MiniGrid-Unlock-v0', render_mode="rgb_array")
-        env = FlatObsWrapper(env)
-        env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: True)
+    if agent_type == 'rl_starter':
 
-        model = PPO.load(path=str(agent_model_path), env=env)
+        env = utils.make_env('MiniGrid-Unlock-v0', seed=0, render_mode="rgb_array")  # Ensure render_mode is set
+        for _ in range(0):
+            env.reset()
 
-        frame_rate = 15
+        print("Environment loaded\n")
+
+        agent = utils.Agent(env.observation_space, env.action_space, str(agent_model_path),
+                            argmax=False, use_memory=False, use_text=False)
+        
+        print("Agent loaded\n")
+
+        env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir),
+                                       episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
+
+        obs, _ = env.reset()
         values = [0, 1, 2, 3, 4, 5, 6, 10]
         probabilities = [0.1, 0.1, 0.1, 0, 0.1, 0, 0, 0.6]
         videos_to_extract = []
@@ -129,9 +131,8 @@ def process_videos_unlock(user_inputs, agent_type,
 
         for episode_id in range(10):
 
-            GameStateTrack = [0, 0, 0, 0, 0, 0, 0, 0]
             curr_number_of_steps = 0
-            observation, info = env.reset()
+            obs , info = env.reset()
             video_saved = False
             isPickedKey = False
             isWinner = False
@@ -143,78 +144,9 @@ def process_videos_unlock(user_inputs, agent_type,
 
                 curr_number_of_steps += 1
 
-                action, _states = model.predict(observation, deterministic=False)
-
-                if (action == 3):
-                    StepUntilKey = curr_number_of_steps
-                    isPickedKey = True
-
-                observation, reward, terminated, truncated, info = env.step(action)
-
-                if (reward > 0):
-                    isWinner = 1
-
-                if terminated or truncated:
-
-                    if checkGameState(curr_number_of_steps, isWinner, isHitWall, KeyColor, StepUntilKey):
-                        if curr_number_of_steps >= (user_inputs[0] * frame_rate):
-                            videos_to_extract.append((episode_id, 0, curr_number_of_steps))
-                            video_saved = True
-                    break
-
-            if not video_saved:
-                env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir),
-                                               episode_trigger=lambda episode_id: False)
-
-        env.close()
-
-        for video_info in videos_to_extract:
-            episode_id, first, end = video_info
-            video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
-            start_time = first / frame_rate
-            end_time = end / frame_rate + 5
-            output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-            if video_path.exists():
-                ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
-                print(f"Video segment saved as {output_clip_path}")
-
-    elif agent_type == 'rl_starter':
-        env = utils.make_env('MiniGrid-Unlock-v0', seed=0, render_mode="rgb_array")  # Ensure render_mode is set
-        for _ in range(0):
-            env.reset()
-        print("Environment loaded\n")
-
-        agent = utils.Agent(env.observation_space, env.action_space, str(agent_model_path),
-                            argmax=False, use_memory=False, use_text=False)
-        print("Agent loaded\n")
-
-        env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir),
-                                       episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
-
-        frame_rate = 15
-        values = [0, 1, 2, 3, 4, 5, 6, 10]
-        probabilities = [0.1, 0.1, 0.1, 0, 0.1, 0, 0, 0.6]
-        videos_to_extract = []
-        number_of_steps = 0
-
-        isPickedKey = False
-
-        for episode_id in range(10):
-            first = None
-            end = None
-            v = [0, 0, 0, 0, 0]
-            curr_number_of_steps = 0
-            obs, _ = env.reset()
-            video_saved = False
-            isPickedKey = False
-            for step in range(10000):
-                number_of_steps += 1
-                curr_number_of_steps += 1
-
                 action = agent.get_action(obs)
 
                 obs, reward, terminated, truncated, _ = env.step(action)
-                done = terminated or truncated
 
                 if (action == 3 and (get_key_color(env) == "red" or get_key_color(env) == "blue")):
                     isPickedKey = True
@@ -224,94 +156,41 @@ def process_videos_unlock(user_inputs, agent_type,
                     values.append(action)
                     action = np.random.choice(values, size=1, p=probabilities)
 
-                user_check = query_unlock(user_inputs)
+                if (action == 3):
+                    StepUntilKey = curr_number_of_steps
+                    isPickedKey = True
 
-                if user_check[1] == 1:
-                    if curr_number_of_steps <= user_inputs[1]:
-                        v[0] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[0] = 0
-                        first = curr_number_of_steps
-                        v = [0, 0, 0, 0, 0]
+                if (reward > 0):
+                    isWinner = 1
 
-                if user_check[2] == 1:
-                    if curr_number_of_steps >= user_inputs[2]:
-                        v[1] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[1] = 0
-                        first = curr_number_of_steps
-                        v = [0, 0, 0, 0, 0]
-
-                if user_check[3] == 1:
-                    if is_door_open(env):
-                        v[2] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[2] = 0
-                else:
-                    if not is_door_open(env):
-                        v[2] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[2] = 0
-
-                if user_check[4] == 1:
-                    if action == 3:
-                        action = 0
-                        v[3] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[3] = 0
-                else:
-                    if action != 3:
-                        v[3] = 1
-                        if first is None:
-                            first = curr_number_of_steps
-                    else:
-                        v[3] = 0
-
-                v[4] = 1
-
-                if done:
-                    isPickedKey = False
-                    if all(v):
-                        if (curr_number_of_steps - first) >= (user_inputs[0] * frame_rate):
-                            end = curr_number_of_steps
-                            videos_to_extract.append((episode_id, first, end))
-                            video_saved = True
+                if terminated or truncated:
+                    if checkGameState(user_inputs,curr_number_of_steps, isWinner, isHitWall, KeyColor, StepUntilKey):
+                        videos_to_extract.append(episode_id)
                     break
-
-            if not video_saved:
-                env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir),
-                                               episode_trigger=lambda episode_id: False)
-
+                
         env.close()
 
         #######################
         #### Saving Videos ####
         #######################
+        video_files_to_keep = {f"rl-video-episode-{video_info}.mp4" for video_info in videos_to_extract}
 
-        for video_info in videos_to_extract:
-            episode_id, first, end = video_info
-            video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
-            start_time = first / frame_rate
-            end_time = end / frame_rate + 5
-            output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-            if video_path.exists():
-                ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
-                print(f"Video segment saved as {output_clip_path}")
+        # List all .mp4 files in the directory
+        directory_videos = list(video_dir.glob("*.mp4"))
 
-    for video_file in clips_dir.glob("*.mp4"):
-        convert_to_mp4(video_file)
+        # Loop through the videos in the directory
+        for video_path in directory_videos:
+            # Extract the file name from the path
+            video_file_name = video_path.name
+            
+            # If the video is not in the list of videos to keep, delete it
+            if video_file_name not in video_files_to_keep:
+                print(f"Deleting {video_file_name} and its corresponding .meta.json file")
+                video_path.unlink()  # Delete the video file
 
-    for video_info in videos_to_extract:
-        episode_id = video_info[0]
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        extend_video(output_clip_path, extension_factor=2)
+                # Delete the corresponding .meta.json file
+                meta_json_path = video_path.with_suffix(".meta.json")
+                if meta_json_path.exists():
+                    meta_json_path.unlink()
+
+

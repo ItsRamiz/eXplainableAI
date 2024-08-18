@@ -25,7 +25,7 @@ pip install minigrid
 pip install gym moviepy
 
 
-
+# Be Aware, tensorboardX did not install using requirement.txt, double check!
 
 #### UI 
 pip install Werkzeug

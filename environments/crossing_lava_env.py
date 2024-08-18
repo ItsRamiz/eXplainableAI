@@ -7,13 +7,14 @@ from flask import redirect, url_for
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from videos.video_utils import convert_to_mp4, extend_video
 
+
 def submit_crossing_env(request):
     if request.method == 'POST':
         try:
             # Sanitize input data
-            min_duration = int(request.form['minDuration'].replace(',', ''))
-            max_steps = int(request.form['maxSteps'].replace(',', ''))
-            min_steps = int(request.form['minSteps'].replace(',', ''))
+            min_duration = int(request.form['minDuration'].replace(',', '')) if request.form['minDuration'] else 0
+            max_steps = int(request.form['maxSteps'].replace(',', '')) if request.form['maxSteps'] else 1000000
+            min_steps = int(request.form['minSteps'].replace(',', '')) if request.form['minSteps'] else 1
             is_winner = 1 if 'isWinner' in request.form else 0
             hit_a_wall = 1 if 'hitLava' in request.form else 0
 
@@ -36,14 +37,26 @@ def submit_crossing_env(request):
     else:
         return "Request method is not POST"
 
+
+def checkGameState(user_inputs, numberSteps, isWinner, isHitWall):
+    # [min_duration, max_steps, min_steps, is_winner, hit_a_wall,]
+    #      0           1          2           3         4           
+    #   IGNORED                                                     
+
+    if numberSteps <= user_inputs[1] and numberSteps >= user_inputs[2] and isWinner == user_inputs[3] and isHitWall == user_inputs[4]:
+        return True
+    else:
+        return False
+
 def process_videos_lava(user_inputs, agent_model_path):
     video_dir = Path("static/videos")
     video_dir.mkdir(parents=True, exist_ok=True)
+
     for video_file in video_dir.glob("*.mp4"):
         video_file.unlink()
 
-    clips_dir = video_dir / "clips"
-    clips_dir.mkdir(parents=True, exist_ok=True)
+    for video_file in video_dir.glob("*.meta.json"):
+        video_file.unlink()
 
     env = utils.make_env('MiniGrid-LavaCrossingS9N1-v0', seed=0, render_mode="rgb_array")  # Ensure render_mode is set
     for _ in range(0):
@@ -55,126 +68,53 @@ def process_videos_lava(user_inputs, agent_model_path):
     print("Agent loaded\n")
 
     env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
-
-    frame_rate = 15
-    values = [0, 1, 2, 3, 4, 5, 6, 10]
-    probabilities = [0.1, 0.1, 0.1, 0, 0.1, 0, 0, 0.6]
+    
     videos_to_extract = []
-    number_of_steps = 0
 
     for episode_id in range(10):
-        first = None
-        end = None
-        v = [0, 0, 0, 0, 0]
+
         curr_number_of_steps = 0
         obs, _ = env.reset()
         video_saved = False
+        isWinner = False
+        isHitWall = False
+
         for step in range(10000):
-            number_of_steps += 1
             curr_number_of_steps += 1
 
             action = agent.get_action(obs)
-
             obs, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
 
-            user_check = query_lava(user_inputs)
+            if (reward > 0):
+                isWinner = 1
 
-            if user_check[1] == 1:
-                if curr_number_of_steps <= user_inputs[1]:
-                    v[0] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[0] = 0
-                    first = curr_number_of_steps
-                    v = [0, 0, 0, 0, 0]
-
-            if user_check[2] == 1:
-                if curr_number_of_steps >= user_inputs[2]:
-                    v[1] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[1] = 0
-                    first = curr_number_of_steps
-                    v = [0, 0, 0, 0, 0]
-
-            if user_check[3] == 1:
-                if reward > 0:
-                    v[2] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[2] = 0
-            else:
-                if reward == 0:
-                    v[2] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[2] = 0
-
-            if user_check[4] == 1:
-                if hit_lava(env):
-                    action = 0
-                    v[3] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[3] = 0
-            else:
-                if not hit_lava(env):
-                    v[3] = 1
-                    if first is None:
-                        first = curr_number_of_steps
-                else:
-                    v[3] = 0
-
-            v[4] = 1
-
-            if done:
-                if all(v):
-                    if (curr_number_of_steps - first) >= (user_inputs[0] * frame_rate):
-                        end = curr_number_of_steps
-                        videos_to_extract.append((episode_id, first, end))
-                        video_saved = True
+            if terminated or truncated:
+                if checkGameState(user_inputs, curr_number_of_steps,isWinner,isHitWall):
+                    videos_to_extract.append(episode_id)
                 break
 
-        if not video_saved:
-            env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: False)
+        env.close()
 
-    env.close()
+        #######################
+        #### Saving Videos ####
+        #######################
+        video_files_to_keep = {f"rl-video-episode-{video_info}.mp4" for video_info in videos_to_extract}
 
-    for video_info in videos_to_extract:
-        episode_id, first, end = video_info
-        video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
-        start_time = first / frame_rate
-        end_time = end / frame_rate + 5
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        if video_path.exists():
-            ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
-            print(f"Video segment saved as {output_clip_path}")
+        # List all .mp4 files in the directory
+        directory_videos = list(video_dir.glob("*.mp4"))
 
-    for video_file in clips_dir.glob("*.mp4"):
-        convert_to_mp4(video_file)
+        # Loop through the videos in the directory
+        for video_path in directory_videos:
+            # Extract the file name from the path
+            video_file_name = video_path.name
+            
+            # If the video is not in the list of videos to keep, delete it
+            if video_file_name not in video_files_to_keep:
+                print(f"Deleting {video_file_name} and its corresponding .meta.json file")
+                video_path.unlink()  # Delete the video file
 
-    for video_info in videos_to_extract:
-        episode_id = video_info[0]
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        extend_video(output_clip_path, extension_factor=2)
-
-def query_lava(user_inputs):
-    vector = []
-    vector.append(1 if user_inputs[0] > 0 and user_inputs[0] <= 5 else 0)
-    vector.append(1 if user_inputs[1] > 0 else 0)
-    vector.append(1 if user_inputs[2] > 0 else 0)
-    vector.append(1 if user_inputs[3] == 1 else 0)
-    vector.append(1 if user_inputs[4] == 1 else 0)
-    return vector
-
-def hit_lava(env):
-    agent_pos = tuple(env.agent_pos)
-    for obj in env.grid.grid:
-        if obj and obj.type == 'lava' and (obj.cur_pos[0], obj.cur_pos[1]) == agent_pos:
-            return True
+                # Delete the corresponding .meta.json file
+                meta_json_path = video_path.with_suffix(".meta.json")
+                if meta_json_path.exists():
+                    meta_json_path.unlink()

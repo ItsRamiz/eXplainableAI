@@ -12,10 +12,9 @@ from agents.visulizationPage import getFolders, killDisplayFunc, visualizeModelF
 from trainCustomEnv import process_training_request
 
 app = Flask(__name__, template_folder='templates')
-app.secret_key = 'your_secret_key'  # Required for flash messages
+app.secret_key = 'your_secret_key' 
 
-visualization_process = None  # Global variable to store the subprocess
-# Define the path to save the environment data file
+visualization_process = None  
 env_data_path = os.path.join(app.root_path, 'environment.json')
 
 # Main page
@@ -98,6 +97,7 @@ def visualize():
 def kill_display():
     return kill_process()
 
+# visualization page routes
 @app.route('/visualizePage')
 def visualizePage():
     return render_template('visulize.html')
@@ -114,16 +114,15 @@ def kill_display_func():
 def get_folders():
     return getFolders()
 
+# custom environment page routes
 @app.route('/CustomEnvPage')
 def CustomEnvPage():
     return render_template('CustomEnv.html')
-
 
 @app.route('/trainCustomEnvPage')
 def trainCustomEnvPage():
     return render_template('trainCustomEnv.html')
 
-# Ensure this route is defined only once in your entire application
 @app.route('/save-environment', methods=['POST'])
 def save_environment():
     data = request.json
@@ -140,8 +139,8 @@ def load_environment():
 
 @app.route('/submit_custom_training', methods=['POST'])
 def submit_custom_training():
-    form_data = request.form.to_dict()  # Capture form data from the POST request
-    result = process_training_request(form_data)  # Process the training request
+    form_data = request.form.to_dict()  
+    result = process_training_request(form_data) 
 
     if result['status'] == 'success':
         flash(result['message'], 'success')

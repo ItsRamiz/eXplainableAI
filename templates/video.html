@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Display</title>
     <style>
+        /* Your existing CSS */
         body {
             background-color: #333;
             color: white;
@@ -60,7 +61,7 @@
         }
         .video {
             background-color: #555;
-            width: 180;
+            width: 180px;
             height: 130px;
             margin: 15px;
             display: flex;
@@ -77,8 +78,8 @@
         }
         .input-field {
             display: block;
-            width: 100px; /* Adjusted width for better appearance */
-            margin: 0 auto 20px; /* Adjusted margin to position higher */
+            width: 100px;
+            margin: 0 auto 20px;
             padding: 10px;
             font-size: 16px;
             background-color: #444;
@@ -107,44 +108,43 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Define some sample videos
-            const sampleVideos = [
-                'static/videos/rl-video-episode-0.mp4',
-                'static/videos/rl-video-episode-1.mp4',
-                'static/videos/rl-video-episode-2.mp4'
-            ];
+            // Fetch the video list from the Flask server
+            fetch('/get_videos')
+                .then(response => response.json())
+                .then(videos => {
+                    const mainVideo = document.getElementById('mainVideo');
+                    const videoGrid = document.getElementById('videoGrid');
 
-            // Select the main video element
-            const mainVideo = document.getElementById('mainVideo');
-            // Set the default main video
-            mainVideo.src = sampleVideos[0];
+                    if (videos.length > 0) {
+                        // Set the default main video
+                        mainVideo.src = 'static/videos/' + videos[0];
 
-            // Select the video grid
-            const videoGrid = document.getElementById('videoGrid');
+                        videos.forEach(videoName => {
+                            const videoWrapper = document.createElement('div');
+                            videoWrapper.classList.add('video');
 
-            // Function to play a video
-            function playVideo(videoSrc) {
-                mainVideo.src = videoSrc;
-                mainVideo.play();
-            }
+                            const video = document.createElement('video');
+                            video.src = 'static/videos/' + videoName;
+                            video.muted = true; // Mute the small videos
+                            videoWrapper.appendChild(video);
 
-            // Load the other videos
-            sampleVideos.forEach((videoSrc) => {
-                const videoWrapper = document.createElement('div');
-                videoWrapper.classList.add('video');
+                            // Add click event to replace the main video source
+                            videoWrapper.addEventListener('click', () => {
+                                mainVideo.src = 'static/videos/' + videoName;
+                                mainVideo.play();
+                            });
 
-                const video = document.createElement('video');
-                video.src = videoSrc;
-                video.muted = true; // Mute the small videos
-                videoWrapper.appendChild(video);
-
-                // Add click event to replace the main video source
-                videoWrapper.addEventListener('click', () => {
-                    playVideo(videoSrc);
+                            videoGrid.appendChild(videoWrapper);
+                        });
+                    } else {
+                        videoGrid.innerHTML = '<p>No videos found</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching videos:', error);
+                    const videoGrid = document.getElementById('videoGrid');
+                    videoGrid.innerHTML = '<p>Error loading videos</p>';
                 });
-
-                videoGrid.appendChild(videoWrapper);
-            });
         });
     </script>
 </body>

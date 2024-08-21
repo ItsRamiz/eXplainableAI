@@ -1,6 +1,7 @@
 import argparse
 import time
 import datetime
+import numpy
 import torch_ac
 import tensorboardX
 import sys
@@ -38,6 +39,7 @@ parser.add_argument("--optim-alpha", type=float, default=0.99, help="RMSprop opt
 parser.add_argument("--clip-eps", type=float, default=0.2, help="clipping epsilon for PPO (default: 0.2)")
 parser.add_argument("--recurrence", type=int, default=1, help="number of time-steps gradient is backpropagated (default: 1). If > 1, a LSTM is added to the model to have memory.")
 parser.add_argument("--text", action="store_true", default=False, help="add a GRU to the model to handle text input")
+parser.add_argument("--custom", type=int, default=0, help="1 - custom env training")  # Added argument for custom environment
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -70,9 +72,12 @@ if __name__ == "__main__":
     envs = []
     for i in range(args.procs):
         customEnv = 0
+        if args.custom:  # Check if custom environment should be loaded
+            customEnv = 1
         isTrain = 1
-        envs.append(utils.make_env(args.env, args.seed + 10000 * i, customEnv=customEnv,isTrain = 1))
+        envs.append(utils.make_env(args.env, args.seed + 10000 * i, customEnv=customEnv, isTrain=isTrain))  # Load the custom environment if specified
     txt_logger.info("Environments loaded\n")
+
 
     # Load training status
     try:
@@ -183,3 +188,54 @@ if __name__ == "__main__":
         status["vocab"] = preprocess_obss.vocab.vocab
     utils.save_status(status, model_dir)
     txt_logger.info("Final status saved")
+
+    if args.custom:
+        args.shift = 0
+        args.argmax = False
+        args.pause = 0.1
+        args.gif = None
+        args.episodes = 3
+        args.memory = False
+        args.text = False
+
+        env = utils.make_env(args.env, args.seed, render_mode="human", customEnv=1, isTrain=0)
+        for _ in range(args.shift):
+            env.reset()
+        print("Environment loaded\n")
+
+        # Load agent
+
+        model_dir = utils.get_model_dir(args.model)
+        agent = utils.Agent(env.observation_space, env.action_space, model_dir,
+                            argmax=args.argmax, use_memory=args.memory, use_text=args.text)
+        print("Agent loaded\n")
+
+        # Run the agent
+
+        if args.gif:
+            from array2gif import write_gif
+
+            frames = []
+
+        # Create a window to view the environment
+        env.render()
+
+        print("Passed Render Mode")
+
+        for episode in range(args.episodes):
+            print("Episode Started")
+            obs, _ = env.reset()
+
+            while True:
+                env.render()
+                if args.gif:
+                    frames.append(numpy.moveaxis(env.get_frame(), 2, 0))
+
+                action = agent.get_action(obs)
+                obs, reward, terminated, truncated, _ = env.step(action)
+                done = terminated | truncated
+                agent.analyze_feedback(reward, done)
+
+                if done:
+                    break
+

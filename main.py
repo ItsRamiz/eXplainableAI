@@ -9,6 +9,7 @@ from environments.crossing_lava_env import submit_crossing_env
 from agents.visualizeModel import visualizeModelFunc, kill_process
 from agents.trainingParameters import submit_training_agent, training_status_func
 from agents.visulizationPage import getFolders, killDisplayFunc, visualizeModelFunction
+from trainCustomEnv import process_training_request
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = 'your_secret_key'  # Required for flash messages
@@ -130,6 +131,19 @@ def load_environment():
     with open(env_data_path, 'r') as file:
         data = json.load(file)
     return jsonify(data)
+
+@app.route('/submit_custom_training', methods=['POST'])
+def submit_custom_training():
+    form_data = request.form.to_dict()  # Capture form data from the POST request
+    result = process_training_request(form_data)  # Process the training request
+
+    if result['status'] == 'success':
+        flash(result['message'], 'success')
+    else:
+        flash(result['message'], 'error')
+
+    return redirect(url_for('trainCustomEnvPage'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -81,72 +81,75 @@
 
     <h2>Enter Training Parameters</h2>
 
-    <div class="parameters-container">
-        <div class="form-group">
-            <label for="env-name">Environment Name</label>
-            <input type="text" id="env-name" name="EnvName" placeholder="Environment Name">
+    <!-- Form action updated to submit to the new route -->
+    <form action="/submit_custom_training" method="POST">
+        <div class="parameters-container">
+            <div class="form-group">
+                <label for="env-name">Environment Name</label>
+                <input type="text" id="env-name" name="EnvName" placeholder="Environment Name">
+            </div>
+            <div class="form-group">
+                <label for="agent-name">Agent Name</label>
+                <input type="text" id="agent-name" name="agentName" placeholder="Agent Name">
+            </div>
+            <div class="form-group">
+                <label for="seed">Seed</label>
+                <input type="number" id="seed" name="seed" placeholder="Seed">
+            </div>
+            <div class="form-group">
+                <label for="processes">Number of Processes</label>
+                <input type="number" id="processes" name="processes" placeholder="Number of Processes">
+            </div>
+            <div class="form-group">
+                <label for="frames">Number of Frames</label>
+                <input type="number" id="frames" name="frames" placeholder="Number of Frames">
+            </div>
+            <div class="form-group">
+                <label for="epochs">Epochs</label>
+                <input type="number" id="epochs" name="epochs" placeholder="Epochs">
+            </div>
+            <div class="form-group">
+                <label for="batch-size">Batch Size</label>
+                <input type="number" id="batch-size" name="batchSize" placeholder="Batch Size">
+            </div>
+            <div class="form-group">
+                <label for="discount">Discount</label>
+                <input type="number" id="discount" name="discount" placeholder="Discount">
+            </div>
+            <div class="form-group">
+                <label for="learning-rate">Learning Rate</label>
+                <input type="number" id="learning-rate" name="learningRate" placeholder="Learning Rate">
+            </div>
+            <div class="form-group">
+                <label for="entropy-coef">Entropy Coef</label>
+                <input type="number" id="entropy-coef" name="entropyCoef" placeholder="Entropy Coef">
+            </div>
+            <div class="form-group">
+                <label for="adam-epsilon">Optimizer Adam Epsilon</label>
+                <input type="number" id="adam-epsilon" name="adamEpsilon" placeholder="Optimizer Adam Epsilon">
+            </div>
+            <div class="form-group">
+                <label for="rmsprop-optimizer">RMSprop Optimizer Alpha</label>
+                <input type="number" id="rmsprop-optimizer" name="rmspropOptimizer" placeholder="RMSprop Optimizer Alpha">
+            </div>
+            <div class="form-group">
+                <label for="time-steps">Number of Time-steps Backpropagate</label>
+                <input type="number" id="time-steps" name="timeSteps" placeholder="Number of Time-steps Backpropagate">
+            </div>
+            <div class="form-group">
+                <label for="max-norm">Max Norm of Gradient</label>
+                <input type="number" id="max-norm" name="maxNorm" placeholder="Max Norm of Gradient">
+            </div>
         </div>
+    
         <div class="form-group">
-            <label for="agent-name">Agent Name</label>
-            <input type="text" id="agent-name" name="agentName" placeholder="Agent Name">
+            <label for="custom-command">Custom Training Command</label>
+            <textarea id="custom-command" name="customCommand" rows="4" placeholder="Enter your custom training command"></textarea>
         </div>
-        <div class="form-group">
-            <label for="seed">Seed</label>
-            <input type="number" id="seed" name="seed" placeholder="Seed">
-        </div>
-        <div class="form-group">
-            <label for="processes">Number of Processes</label>
-            <input type="number" id="processes" name="processes" placeholder="Number of Processes">
-        </div>
-        <div class="form-group">
-            <label for="frames">Number of Frames</label>
-            <input type="number" id="frames" name="frames" placeholder="Number of Frames">
-        </div>
-        <div class="form-group">
-            <label for="epochs">Epochs</label>
-            <input type="number" id="epochs" name="epochs" placeholder="Epochs">
-        </div>
-        <div class="form-group">
-            <label for="batch-size">Batch Size</label>
-            <input type="number" id="batch-size" name="batchSize" placeholder="Batch Size">
-        </div>
-        <div class="form-group">
-            <label for="discount">Discount</label>
-            <input type="number" id="discount" name="discount" placeholder="Discount">
-        </div>
-        <div class="form-group">
-            <label for="learning-rate">Learning Rate</label>
-            <input type="number" id="learning-rate" name="learningRate" placeholder="Learning Rate">
-        </div>
-        <div class="form-group">
-            <label for="entropy-coef">Entropy Coef</label>
-            <input type="number" id="entropy-coef" name="entropyCoef" placeholder="Entropy Coef">
-        </div>
-        <div class="form-group">
-            <label for="adam-epsilon">Optimizer Adam Epsilon</label>
-            <input type="number" id="adam-epsilon" name="adamEpsilon" placeholder="Optimizer Adam Epsilon">
-        </div>
-        <div class="form-group">
-            <label for="rmsprop-optimizer">RMSprop Optimizer Alpha</label>
-            <input type="number" id="rmsprop-optimizer" name="rmspropOptimizer" placeholder="RMSprop Optimizer Alpha">
-        </div>
-        <div class="form-group">
-            <label for="time-steps">Number of Time-steps Backpropagate</label>
-            <input type="number" id="time-steps" name="timeSteps" placeholder="Number of Time-steps Backpropagate">
-        </div>
-        <div class="form-group">
-            <label for="max-norm">Max Norm of Gradient</label>
-            <input type="number" id="max-norm" name="maxNorm" placeholder="Max Norm of Gradient">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="custom-command">Custom Training Command</label>
-        <textarea id="custom-command" name="customCommand" rows="4" placeholder="Enter your custom training command"></textarea>
-    </div>
-
-    <button class="train-button">Train</button>
-
+    
+        <button type="submit" class="train-button">Train</button>
+    </form>
+    
     <script>
         async function loadEnvironmentData() {
             const response = await fetch('/load-environment');

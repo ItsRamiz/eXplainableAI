@@ -59,6 +59,12 @@ def video():
     video_files = [str(video.relative_to("static")) for video in video_dir.glob("*.mp4")]
     return render_template('video.html', videos=video_files)
 
+@app.route('/get_videos', methods=['GET'])
+def get_videos():
+    video_path = 'static/videos'
+    files = [name for name in os.listdir(video_path) if os.path.isfile(os.path.join(video_path, name)) and name.endswith('.mp4')]
+    return jsonify(files)
+
 # Loading route
 @app.route('/loading')
 def loading():

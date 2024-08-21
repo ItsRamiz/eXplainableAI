@@ -127,7 +127,6 @@
             <option value="6">6x6</option>
             <option value="7">7x7</option>
             <option value="8">8x8</option>
-            <option value="11">11x11</option>
         </select>
 
         <div id="env-grid" class="grid"></div>
@@ -215,7 +214,12 @@
                 });
                 envGrid.appendChild(gridItem);
             }
+            const startPositionIndex = 1 * size + 1;
+            const startPositionGridItem = envGrid.children[startPositionIndex];
+            startPositionGridItem.style.backgroundImage = 'url(static/images/customEnvironmentIcons/player.png)';
+            startPosition = startPositionGridItem;
         }
+
 
         function resetEnvironment() {
             customWalls = [];
@@ -234,6 +238,14 @@
             const index = Array.from(envGrid.children).indexOf(gridItem);
             const row = Math.floor(index / envSizeSelect.value);
             const col = index % envSizeSelect.value;
+            if (startPosition === gridItem) {
+                startPosition = null;
+            }
+            customWalls = customWalls.filter(pos => pos[0] !== row || pos[1] !== col);
+            customLava = customLava.filter(pos => pos[0] !== row || pos[1] !== col);
+            customKeys = customKeys.filter(pos => pos[0] !== row || pos[1] !== col);
+            customDoors = customDoors.filter(pos => pos[0] !== row || pos[1] !== col);
+            customGoals = customGoals.filter(pos => pos[0] !== row || pos[1] !== col);
 
             if (selectedElement === 'start') {
                 if (startPosition) {

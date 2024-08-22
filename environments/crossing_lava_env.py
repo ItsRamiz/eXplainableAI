@@ -17,6 +17,7 @@ def submit_crossing_env(request):
             min_steps = int(request.form['minSteps'].replace(',', '')) if request.form['minSteps'] else 1
             is_winner = 1 if 'isWinner' in request.form else 0
             hit_a_wall = 1 if 'hitLava' in request.form else 0
+            selected_action = request.form['action']
 
             agent_model_path = Path(r'storage\LavaCrossing')
 
@@ -24,7 +25,7 @@ def submit_crossing_env(request):
                 return f"Model file not found: {agent_model_path}"
 
             # Collect user inputs
-            user_inputs = [min_duration, max_steps, min_steps, is_winner, hit_a_wall]
+            user_inputs = [min_duration, max_steps, min_steps, is_winner, hit_a_wall, selected_action]
 
             # Process the videos based on user inputs and agent type
             process_videos_lava(user_inputs, agent_model_path)

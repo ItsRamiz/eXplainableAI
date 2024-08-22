@@ -194,7 +194,7 @@ if __name__ == "__main__":
         args.argmax = False
         args.pause = 0.1
         args.gif = None
-        args.episodes = 3
+        args.episodes = 100
         args.memory = False
         args.text = False
 

@@ -63,6 +63,8 @@ def checkGameState(user_inputs, numberSteps, isWinner, isHitWall):
     #   IGNORED                                                     
 
     if numberSteps <= user_inputs[1] and numberSteps >= user_inputs[2] and isWinner == user_inputs[3]:
+        print("Num of Steps = " , numberSteps)
+        print("ACCEPTED!!")
         return True
     else:
         return False
@@ -73,8 +75,8 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
     for video_file in video_dir.glob("*.mp4"):
         video_file.unlink()
 
-    clips_dir = video_dir / "clips"
-    clips_dir.mkdir(parents=True, exist_ok=True)
+    for video_file in video_dir.glob("*.meta.json"):
+        video_file.unlink()
 
     env = utils.make_env('MiniGrid-Dynamic-Obstacles-6x6-v0', seed=0, render_mode="rgb_array") 
     for _ in range(0):
@@ -126,37 +128,30 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
 
             if terminated or truncated:
                 if checkGameState(user_inputs, curr_number_of_steps,isWinner,isHitWall):
-                    videos_to_extract.append((episode_id, 0, curr_number_of_steps))
-                    video_saved = True
+                    videos_to_extract.append(episode_id)
                 break
-
-        if not video_saved:
-            env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: False)
 
     env.close()
 
-    for video_info in videos_to_extract:
-        episode_id, first, end = video_info
-        video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
-        start_time = first / frame_rate
-        end_time = end / frame_rate + 5
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        if video_path.exists():
-            ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
-            print(f"Video segment saved as {output_clip_path}")
+    #######################
+    #### Saving Videos ####
+    #######################
+    video_files_to_keep = {f"rl-video-episode-{video_info}.mp4" for video_info in videos_to_extract}
 
-    for video_file in clips_dir.glob("*.mp4"):
-        convert_to_mp4(video_file)
+    # List all .mp4 files in the directory
+    directory_videos = list(video_dir.glob("*.mp4"))
 
-    for video_info in videos_to_extract:
-        episode_id = video_info[0]
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        extend_video(output_clip_path, extension_factor=2)
+    # Loop through the videos in the directory
+    for video_path in directory_videos:
+        # Extract the file name from the path
+        video_file_name = video_path.name
+        
+        # If the video is not in the list of videos to keep, delete it
+        if video_file_name not in video_files_to_keep:
+            print(f"Deleting {video_file_name} and its corresponding .meta.json file")
+            video_path.unlink()  # Delete the video file
 
-def query_DynamicObstacles(user_inputs):
-    vector = []
-    vector.append(1 if user_inputs[0] > 0 and user_inputs[0] <= 5 else 0)
-    vector.append(1 if user_inputs[1] > 0 else 0)
-    vector.append(1 if user_inputs[2] > 0 else 0)
-    vector.append(1 if user_inputs[3] == 1 else 0)
-    return vector
+            # Delete the corresponding .meta.json file
+            meta_json_path = video_path.with_suffix(".meta.json")
+            if meta_json_path.exists():
+                meta_json_path.unlink()

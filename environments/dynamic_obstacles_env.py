@@ -8,6 +8,7 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from videos.video_utils import convert_to_mp4, extend_video
 from minigrid.core.constants import OBJECT_TO_IDX
 from minigrid.core.world_object import Ball
+from moviepy.editor import VideoFileClip, vfx
 
 def check_surrounding_balls(env, agent_pos):
     ball_count = 0
@@ -34,6 +35,7 @@ def submit_DynamicObstaclesEnv(request):
             max_steps = int(request.form['maxSteps'].replace(',', '')) if request.form['maxSteps'] else 1000000
             min_steps = int(request.form['minSteps'].replace(',', '')) if request.form['minSteps'] else 1
             is_winner = 1 if 'isWinner' in request.form else 0
+            rapped_by_num_balls = int(request.form['rappedByNumBalls']) if 'rappedByNumBalls' in request.form else 1
 
             agent_model_path1 = Path(r'storage\DynamicObstacle6x6')
             agent_model_path2 = Path(r'storage\DynamicObstacle6x6v2')
@@ -44,7 +46,7 @@ def submit_DynamicObstaclesEnv(request):
                 return f"Model file not found: {agent_model_path2}"
 
             # Collect user inputs
-            user_inputs = [min_duration, max_steps, min_steps, is_winner]
+            user_inputs = [min_duration, max_steps, min_steps, is_winner, rapped_by_num_balls]
 
             # Process the videos based on user inputs and agent type
             process_videos_DynamicObstacles(user_inputs, agent_model_path1, agent_model_path2)
@@ -57,12 +59,11 @@ def submit_DynamicObstaclesEnv(request):
         return "Request method is not POST"
     
 
-def checkGameState(user_inputs, numberSteps, isWinner, isHitWall):
-    # [min_duration, max_steps, min_steps, is_winner, hit_a_wall,]
-    #      0           1          2           3         4           
-    #   IGNORED                                                     
+def checkGameState(user_inputs, numberSteps, isWinner, balls_around):
+    # [min_duration, max_steps, min_steps, is_winner, balls_around]
+    #      0           1          2           3            4                                                              
 
-    if numberSteps <= user_inputs[1] and numberSteps >= user_inputs[2] and isWinner == user_inputs[3]:
+    if numberSteps <= user_inputs[1] and numberSteps >= user_inputs[2] and isWinner == user_inputs[3] and balls_around <= user_inputs[4]:
         return True
     else:
         return False
@@ -79,15 +80,12 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
     env = utils.make_env('MiniGrid-Dynamic-Obstacles-6x6-v0', seed=0, render_mode="rgb_array") 
     for _ in range(0):
         env.reset()
-    print("Environment loaded\n")
 
     agent = utils.Agent(env.observation_space, env.action_space, str(agent_model_path),
                         argmax=False, use_memory=False, use_text=False)
     
     agent_bad = utils.Agent(env.observation_space, env.action_space, str(agent_model_path_2),
                         argmax=False, use_memory=False, use_text=False)
-
-    print("Agent loaded\n")
 
     env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
 
@@ -103,7 +101,6 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
         obs, _ = env.reset()
         video_saved = False
         isWinner = False
-        isHitWall = False
         current_agent = agent
 
         for step in range(10000):
@@ -125,9 +122,8 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
                 isWinner = 1
 
             if terminated or truncated:
-                if checkGameState(user_inputs, curr_number_of_steps,isWinner,isHitWall):
-                    videos_to_extract.append((episode_id, 0, curr_number_of_steps))
-                    video_saved = True
+                if checkGameState(user_inputs, curr_number_of_steps,isWinner, balls_around):
+                    videos_to_extract.append(episode_id)
                 break
 
         if not video_saved:
@@ -135,28 +131,49 @@ def process_videos_DynamicObstacles(user_inputs, agent_model_path,agent_model_pa
 
     env.close()
 
+    #######################
+    #### Saving Videos ####
+    #######################
+    
+    video_files_to_keep = {f"rl-video-episode-{video_info}.mp4" for video_info in videos_to_extract}
+
+    # List all .mp4 files in the directory
+    directory_videos = list(video_dir.glob("*.mp4"))
+
+    # Loop through the videos in the directory
+    for video_path in directory_videos:
+        # Extract the file name from the path
+        video_file_name = video_path.name
+        
+        # If the video is not in the list of videos to keep, delete it
+        if video_file_name not in video_files_to_keep:
+            video_path.unlink()  # Delete the video file
+
+            # Delete the corresponding .meta.json file
+            meta_json_path = video_path.with_suffix(".meta.json")
+            if meta_json_path.exists():
+                meta_json_path.unlink()
+    
+    ##########################
+    #### Slow Down Videos ####
+    ##########################
+
     for video_info in videos_to_extract:
-        episode_id, first, end = video_info
+        episode_id = video_info
         video_path = video_dir / f"rl-video-episode-{episode_id}.mp4"
-        start_time = first / frame_rate
-        end_time = end / frame_rate + 5
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
+
         if video_path.exists():
-            ffmpeg_extract_subclip(str(video_path), start_time, end_time, targetname=str(output_clip_path))
-            print(f"Video segment saved as {output_clip_path}")
+            with VideoFileClip(str(video_path)) as video_clip:
+                slow_clip = video_clip.fx(vfx.speedx, 0.5)  # Slow down to half speed
+                slow_clip.write_videofile(str(video_path), codec="libx264", fps=frame_rate)
+            # Reopen the slowed video to check its duration
+            with VideoFileClip(str(video_path)) as slow_clip:
+                if slow_clip.duration < user_inputs[0]:
+                    slow_clip.close()
+                    video_path.unlink() 
+                    meta_json_path = video_path.with_suffix(".meta.json")
+                    if meta_json_path.exists():
+                        meta_json_path.unlink()
 
     for video_file in clips_dir.glob("*.mp4"):
         convert_to_mp4(video_file)
-
-    for video_info in videos_to_extract:
-        episode_id = video_info[0]
-        output_clip_path = clips_dir / f"output_clip_episode_{episode_id}.mp4"
-        extend_video(output_clip_path, extension_factor=2)
-
-def query_DynamicObstacles(user_inputs):
-    vector = []
-    vector.append(1 if user_inputs[0] > 0 and user_inputs[0] <= 5 else 0)
-    vector.append(1 if user_inputs[1] > 0 else 0)
-    vector.append(1 if user_inputs[2] > 0 else 0)
-    vector.append(1 if user_inputs[3] == 1 else 0)
-    return vector

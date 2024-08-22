@@ -11,7 +11,7 @@ from utils import device
 from flask import redirect, url_for
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from videos.video_utils import convert_to_mp4, extend_video
-
+from moviepy.editor import VideoFileClip, vfx
 
 def is_door_open(env):
     grid = env.unwrapped.grid.encode()
@@ -184,5 +184,13 @@ def process_videos_unlock(user_inputs,
             meta_json_path = video_path.with_suffix(".meta.json")
             if meta_json_path.exists():
                 meta_json_path.unlink()
+        else:
+             with VideoFileClip(str(video_path)) as video_clip:
+                if video_clip.duration < user_inputs[0]:
+                    video_clip.close()
+                    video_path.unlink() 
+                    meta_json_path = video_path.with_suffix(".meta.json")
+                    if meta_json_path.exists():
+                        meta_json_path.unlink()
 
 

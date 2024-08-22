@@ -62,11 +62,9 @@ def process_videos_lava(user_inputs, agent_model_path):
     env = utils.make_env('MiniGrid-LavaCrossingS9N1-v0', seed=0, render_mode="rgb_array")  # Ensure render_mode is set
     for _ in range(0):
         env.reset()
-    print("Environment loaded\n")
 
     agent = utils.Agent(env.observation_space, env.action_space, str(agent_model_path),
                         argmax=False, use_memory=False, use_text=False)
-    print("Agent loaded\n")
 
     env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir), episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
     
@@ -112,7 +110,6 @@ def process_videos_lava(user_inputs, agent_model_path):
             
             # If the video is not in the list of videos to keep, delete it
             if video_file_name not in video_files_to_keep:
-                print(f"Deleting {video_file_name} and its corresponding .meta.json file")
                 video_path.unlink()  # Delete the video file
 
                 # Delete the corresponding .meta.json file

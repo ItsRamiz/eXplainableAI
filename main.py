@@ -9,13 +9,13 @@ from environments.crossing_lava_env import submit_crossing_env
 from agents.visualizeModel import visualizeModelFunc, kill_process
 from agents.trainingParameters import submit_training_agent, training_status_func
 from agents.visulizationPage import getFolders, killDisplayFunc, visualizeModelFunction
-from trainCustomEnv import process_training_request
+from customEnvs.trainCustomEnv import process_training_request
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = 'your_secret_key' 
 
 visualization_process = None  
-env_data_path = os.path.join(app.root_path, 'environment.json')
+env_data_path = os.path.join(app.root_path, 'customEnvs/environment.json')
 
 # Main page
 @app.route('/')

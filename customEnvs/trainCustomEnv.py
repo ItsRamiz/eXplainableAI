@@ -60,14 +60,9 @@ def process_training_request(form_data):
     if data['customCommand']:
         command.extend(data['customCommand'].split())
 
-    print(f"Executing command: {' '.join(command)}")  # Debugging print
-
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
-
-        print(f"Command stdout: {stdout.decode()}")  # Debugging print
-        print(f"Command stderr: {stderr.decode()}")  # Debugging print
 
         if process.returncode == 0:
             return {"status": "success", "message": "Training started successfully."}
@@ -87,7 +82,6 @@ def execute_command(command):
             return 0
         else:
             error_message = stderr.decode()
-            print(f"Error: {error_message}")  # Log the error for debugging
             return error_message
     except subprocess.CalledProcessError as e:
         return str(e)

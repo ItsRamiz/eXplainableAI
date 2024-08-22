@@ -73,16 +73,9 @@ def submit_unlock_env(request):
 def checkGameState(user_inputs,numberSteps, isWinner, isHitWall, KeyColor, MaxStepUntilKey):
     # [min_duration, max_steps, min_steps, is_winner, hit_a_wall, door_position, key_color, max_steps_until_key]
     #      0           1          2           3         4             5          6          7
-    #   IGNORED                                                     IGNORED
-    #print("Inputs = " , user_inputs)
-    #print("Steps = " , numberSteps)
-    #print("IsWinner = " , isWinner)
-    #print("hitWall = " , isHitWall)
-    #print("Key Color = " , KeyColor)
-    #print("MaxStepUKey = " , MaxStepUntilKey)
+    #                                                        IGNORED
 
     if numberSteps <= user_inputs[1] and isWinner == user_inputs[3] and isHitWall == user_inputs[4] and (KeyColor == user_inputs[6] or user_inputs[6] == 'unknown') and MaxStepUntilKey <= user_inputs[7]:
-        #print("Used!!")
         return True
     else:
         return False
@@ -104,12 +97,8 @@ def process_videos_unlock(user_inputs,
     for _ in range(0):
         env.reset()
 
-    print("Environment loaded\n")
-
     agent = utils.Agent(env.observation_space, env.action_space, str(agent_model_path),
                         argmax=False, use_memory=False, use_text=False)
-    
-    print("Agent loaded\n")
 
     env = gym.wrappers.RecordVideo(env, video_folder=str(video_dir),
                                     episode_trigger=lambda episode_id: True)  # Add RecordVideo wrapper
@@ -177,7 +166,6 @@ def process_videos_unlock(user_inputs,
         
         # If the video is not in the list of videos to keep, delete it
         if video_file_name not in video_files_to_keep:
-            print(f"Deleting {video_file_name} and its corresponding .meta.json file")
             video_path.unlink()  # Delete the video file
 
             # Delete the corresponding .meta.json file

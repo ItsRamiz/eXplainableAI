@@ -13,7 +13,7 @@ from minigrid.core.world_object import Wall, Lava, Door, Key, Goal
 # Function to load environment data from JSON
 import json
 
-def load_env_data(file_path='environment.json'):
+def load_env_data(file_path='customEnvs/environment.json'):
     with open(file_path, 'r') as file:
         env_data = json.load(file)
     return env_data

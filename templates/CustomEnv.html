@@ -238,8 +238,9 @@
             const index = Array.from(envGrid.children).indexOf(gridItem);
             const row = Math.floor(index / envSizeSelect.value);
             const col = index % envSizeSelect.value;
-            if (startPosition === gridItem) {
-                startPosition = null;
+            if (gridItem === startPosition) {
+                alert("You cannot place any object on the start position!");
+                return;  
             }
             customWalls = customWalls.filter(pos => pos[0] !== row || pos[1] !== col);
             customLava = customLava.filter(pos => pos[0] !== row || pos[1] !== col);
@@ -248,6 +249,7 @@
             customGoals = customGoals.filter(pos => pos[0] !== row || pos[1] !== col);
 
             if (selectedElement === 'start') {
+                deleteGridItem(gridItem);
                 if (startPosition) {
                     startPosition.style.backgroundColor = '#444';
                     startPosition.style.backgroundImage = '';

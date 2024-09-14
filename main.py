@@ -16,6 +16,7 @@ app.secret_key = 'your_secret_key'
 
 visualization_process = None  
 env_data_path = os.path.join(app.root_path, 'customEnvs/environment.json')
+storage_folder = 'storage'  
 
 # Main page
 @app.route('/')
@@ -33,7 +34,8 @@ def XAI_system2():
 
 @app.route('/unlock_env')
 def unlock_env():
-    return render_template('UnlockEnv.html')
+    agent_folders = [name for name in os.listdir(storage_folder) if os.path.isdir(os.path.join(storage_folder, name))]
+    return render_template('UnlockEnv.html', agent_folders=agent_folders)
 
 @app.route('/submit_unlock', methods=['POST'])
 def submit_unlock():

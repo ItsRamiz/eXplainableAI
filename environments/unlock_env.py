@@ -43,15 +43,14 @@ def submit_unlock_env(request):
             door_position = int(request.form['doorPosition'].replace(',', '')) if request.form['doorPosition'] else -999
             max_steps_until_key = int(request.form['stepsUntilKey'].replace(',', '')) if request.form[
                 'stepsUntilKey'] else 1000000
-
             # Check for checkbox and select fields
             is_winner = 1 if 'isWinner' in request.form else 0
             hit_a_wall = 1 if 'hitAWall' in request.form else 0
             key_color = request.form['keyColor'] if 'keyColor' in request.form and request.form[
                 'keyColor'] else 'unknown'
 
-            agent_model_path = Path(r'storage\Unlockenv')
-
+            selected_agent = request.form['chooseAgent']
+            agent_model_path = Path(f'storage/{selected_agent}')
             if not agent_model_path.exists():
                 return f"Model file not found: {agent_model_path}"
 

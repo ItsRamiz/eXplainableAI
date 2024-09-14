@@ -81,6 +81,12 @@
             <img src="{{ url_for('static', filename='images/UnlockenvGif.gif') }}" alt="Environment Image" width="50%">
         </div>
         <form action="/submit_unlock" method="POST">
+            <select class="input-field" name="chooseAgent">
+                <option value="" disabled selected>choose agent</option>
+                {% for folder in agent_folders %}
+                <option value="{{ folder }}">{{ folder }}</option>
+                {% endfor %}
+            </select>
             <input class="input-field" type="text" name="minDuration" placeholder="Min Duration of Video" required>
             <input class="input-field" type="text" name="maxSteps" placeholder="Max Num Of Steps" required>
             <input class="input-field" type="text" name="minSteps" placeholder="Min Num Of Steps" required>

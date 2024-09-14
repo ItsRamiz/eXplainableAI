@@ -1,8 +1,9 @@
 import os
 import subprocess
-from flask import Flask, json, jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask, json, jsonify, render_template, request, redirect, url_for, flash, send_file
 from pathlib import Path
-
+import shutil
+from zipfile import ZipFile
 from environments.dynamic_obstacles_env import submit_DynamicObstaclesEnv
 from environments.unlock_env import submit_unlock_env
 from environments.crossing_lava_env import submit_crossing_env
@@ -10,6 +11,7 @@ from agents.visualizeModel import visualizeModelFunc, kill_process
 from agents.trainingParameters import submit_training_agent, training_status_func
 from agents.visulizationPage import getFolders, killDisplayFunc, visualizeModelFunction
 from customEnvs.trainCustomEnv import process_training_request
+
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = 'your_secret_key' 
@@ -142,10 +144,17 @@ def load_environment():
 @app.route('/submit_custom_training', methods=['POST'])
 def submit_custom_training():
     form_data = request.form.to_dict()  
-    result = process_training_request(form_data) 
+    result = process_training_request(form_data)
+    agent_folder_name = form_data.get('agentName') or 'default_agent'
+    folder_path = os.path.join(storage_folder, agent_folder_name)
+    zip_filename = f"{agent_folder_name}.zip"
+    zip_filepath = os.path.join(storage_folder, zip_filename)
 
     if result['status'] == 'success':
-        flash(result['message'], 'success')
+        shutil.make_archive(zip_filepath.replace('.zip', ''), 'zip', folder_path)
+        shutil.rmtree(folder_path)
+        return send_file(zip_filepath, as_attachment=True, download_name=zip_filename)
+
     else:
         flash(result['message'], 'error')
 

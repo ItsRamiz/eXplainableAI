@@ -120,6 +120,22 @@ While the current system primarily focuses on virtual environments, we are worki
 
 This feature will be particularly useful for real-world applications such as robotics, autonomous systems, and AI-driven decision-making in physical environments. By allowing agents to perceive and interact with the real world, the system could be used in industries ranging from manufacturing to autonomous driving, bringing the power of AI out of the virtual realm and into real life.
 
+## References and Acknowledgments
+
+This project would not have been possible without the contributions and resources provided by various individuals and organizations. We would like to extend our thanks to the following:
+
+1. **OpenAI Documentation**: For providing access to a comprehensive range of open-source tools, libraries, and educational resources that played a crucial role in the development of this project.
+
+2. **The Team at University of Haifa and The Technion**: A special thank you to our collaborators and colleagues from both institutions, whose expertise and partnership were instrumental in making this project a reality.
+
+3. **Research Resources**: 
+   - [OpenAI Research on Explainable AI](https://arxiv.org/abs/2301.09941) 
+   - [IEEE Xplore - Reinforcement Learning in Robotics](https://ieeexplore.ieee.org/document/9372847)
+
+4. **Lucas Williams**: For his outstanding contributions to the fundamentals of reinforcement learning algorithms, which greatly informed and influenced the direction of this project.
+
+We are grateful to all these contributors for their insights and resources, without which this project could not have achieved its current scope and depth.
+
 
 
 

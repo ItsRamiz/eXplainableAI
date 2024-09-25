@@ -65,7 +65,7 @@ By providing clips instead of full-length episodes, this feature ensures that us
 
 ## Feature 4: Custom-Made Environments
 
-Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. All of the system’s powerful features—training, visualization, event querying, and video generation—are fully compatible with these custom-made environments.
+Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. This allows researchers and developers to experiment with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
 
 ### Key Customization Options
 
@@ -81,16 +81,8 @@ Recognizing the limitations of pre-made MiniGrid environments, we’ve added the
 
 - **Reward System**: Users can customize the reward system, which plays a critical role in reinforcement learning. This includes defining the rewards or penalties agents receive for achieving goals, making mistakes, or interacting with various elements in the environment.
 
-### Full Feature Compatibility
+The custom environments are fully compatible with all the features above provided by the system.
 
-The custom environments are fully compatible with all the features provided by the system:
-
-- **XAI System**: The user can track and query specific events in custom environments just as easily as in the predefined ones. 
-- **GameStateTracker**: State tracking is also enabled for custom environments, ensuring accurate episode retrieval.
-- **Graphical Visualization**: Users can visually explore how agents interact with the environment they’ve created.
-- **Video Clipping**: Even in custom environments, users can choose to receive shorter clips of relevant moments for faster analysis.
-
-By offering this level of customization, the system allows researchers and developers to experiment with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
 
 ## Upcoming Features
 

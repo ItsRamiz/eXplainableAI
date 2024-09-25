@@ -65,7 +65,10 @@ By providing clips instead of full-length episodes, this feature ensures that us
 
 ## Feature 4: Custom-Made Environments
 
-Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. This allows researchers and developers to experiment with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
+Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. Users can define custom map sizes, objects, obstacles, and goals, enabling experimentation with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
+
+Additionally, users can **train agents on these custom environments**, applying reinforcement learning techniques with fully customizable parameters. This feature enhances the flexibility of the system, allowing for the creation of unique environments and tailored agent training experiences.
+
 
 ### Key Customization Options
 
@@ -78,8 +81,6 @@ Recognizing the limitations of pre-made MiniGrid environments, we’ve added the
 - **Locked/Unlocked Doors**: Set up doors that require agents to unlock them using specific keys, creating more advanced task sequences and introducing dependencies between objects and rewards.
 
 - **Goals**: Define the end goals for the agent, whether it's reaching a specific location, collecting an object, or triggering a certain event. These goals help shape the agent’s learning process and influence its behavior within the environment.
-
-- **Reward System**: Users can customize the reward system, which plays a critical role in reinforcement learning. This includes defining the rewards or penalties agents receive for achieving goals, making mistakes, or interacting with various elements in the environment.
 
 The custom environments are fully compatible with all the features above provided by the system.
 

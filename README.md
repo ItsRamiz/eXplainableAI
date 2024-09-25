@@ -63,6 +63,63 @@ To further enhance the efficiency of the visualization process, the project incl
 By providing clips instead of full-length episodes, this feature ensures that users can quickly and efficiently analyze agent behavior without the need to sift through lengthy recordings. This is especially useful for large-scale studies or when analyzing multiple episodes, significantly improving the overall user experience and making the visualization process much more efficient.
 
 
+## Feature 4: Custom-Made Environments
+
+Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. All of the system’s powerful features—training, visualization, event querying, and video generation—are fully compatible with these custom-made environments.
+
+### Key Customization Options
+
+- **Map Size**: Users can define the dimensions of the environment, adjusting it to suit different scales of complexity and exploration.
+  
+- **Lava**: Add or remove lava tiles to create hazards that agents must navigate around or avoid, adding a layer of difficulty and strategic challenge.
+
+- **Keys and Key Colors**: Users can place keys within the environment and choose their colors. This adds variety to agent-object interaction and can be used to create more complex puzzles and tasks.
+
+- **Locked/Unlocked Doors**: Set up doors that require agents to unlock them using specific keys, creating more advanced task sequences and introducing dependencies between objects and rewards.
+
+- **Goals**: Define the end goals for the agent, whether it's reaching a specific location, collecting an object, or triggering a certain event. These goals help shape the agent’s learning process and influence its behavior within the environment.
+
+- **Reward System**: Users can customize the reward system, which plays a critical role in reinforcement learning. This includes defining the rewards or penalties agents receive for achieving goals, making mistakes, or interacting with various elements in the environment.
+
+### Full Feature Compatibility
+
+The custom environments are fully compatible with all the features provided by the system:
+
+- **XAI System**: The user can track and query specific events in custom environments just as easily as in the predefined ones. 
+- **GameStateTracker**: State tracking is also enabled for custom environments, ensuring accurate episode retrieval.
+- **Graphical Visualization**: Users can visually explore how agents interact with the environment they’ve created.
+- **Video Clipping**: Even in custom environments, users can choose to receive shorter clips of relevant moments for faster analysis.
+
+By offering this level of customization, the system allows researchers and developers to experiment with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
+
+## Upcoming Features
+
+As part of our ongoing commitment to expanding and improving the capabilities of the project, several exciting features are planned for future updates. These additions aim to enhance the agent’s functionality, increase flexibility for the user, and expand the range of environments the system can handle.
+
+### 1. Enhanced Text Understanding with LLM Integration
+
+While the agent already has a basic understanding of text-based inputs, we plan to significantly boost this capability by integrating a **Large Language Model (LLM)**. This will allow the agent to understand and process more complex user commands, opening the door for **natural language interaction**. 
+
+Instead of relying on predefined options for environment settings, event queries, and actions, users will soon be able to input textual instructions or speech commands. The LLM will interpret these inputs, providing a more fluid and intuitive way to interact with the system. This feature is expected to revolutionize how users create environments, train agents, and query events by making the interface more flexible and user-friendly.
+
+### 2. More Diverse and Sparse Reward System
+
+One of the current limitations of existing MiniGrid environments is the simplicity of their reward systems. We are planning to introduce a **sparse rewards system** that offers greater diversity in how rewards are allocated. 
+
+This new system will allow for more sophisticated reinforcement learning by distributing rewards not just for goal achievement but based on various metrics, such as efficiency, exploration, or interaction with specific objects. The richer reward structures will enable users to train agents in more complex, real-world-aligned tasks, moving beyond the rigid constraints of traditional environments.
+
+### 3. Custom Objects with Custom Behaviors
+
+In future updates, we will enable the ability to create and incorporate **custom objects** into environments. These objects can have unique behaviors and properties, opening up new possibilities for both research and practical applications.
+
+As we dive deeper into OpenAI’s source code for MiniGrid, we are getting closer to making this a reality. Users will be able to add objects with specific roles—such as tools, obstacles, or interactive elements—that go beyond what is currently possible with standard MiniGrid objects. This will allow for the creation of far more intricate and realistic environments, pushing the boundaries of agent training.
+
+### 4. Expansion to Real-Life Environments
+
+While the current system primarily focuses on virtual environments, we are working on expanding it to operate in **real-life environments**. Leveraging advancements in **computer vision**, **image processing**, and **reinforcement learning**, we aim to create a framework where agents can operate in physical spaces.
+
+This feature will be particularly useful for real-world applications such as robotics, autonomous systems, and AI-driven decision-making in physical environments. By allowing agents to perceive and interact with the real world, the system could be used in industries ranging from manufacturing to autonomous driving, bringing the power of AI out of the virtual realm and into real life.
+
 
 
 

@@ -2,9 +2,8 @@
 
 This project is a collaborative effort between The Technion and University of Haifa, aimed at developing a unique interactive tool for predicting and analyzing agent behavior in both virtual and real-world environments. The tool is designed to assist researchers and users by providing video outputs that match specific behavioral scenarios described through textual queries. By simulating temporal behaviors or events, the tool enhances research capabilities in fields such as reinforcement learning, artificial intelligence, and agent behavior prediction.
 
-<br>
 ![alt text](static/images/ReadMe/MainPage.gif)
-<br>
+
 
 ## Feature 1: Customizable Agent Training with Reinforcement Learning
 
@@ -42,9 +41,8 @@ This graphical visualization tool is crucial for better understanding agent beha
 
 The centerpiece of this project is the **XAI System (Explainable AI System)**, a powerful tool that revolutionizes the way users interact with and understand agent behaviors. By leveraging advanced explainability techniques, the XAI system provides a transparent and intuitive interface for exploring complex reinforcement learning outcomes. It is designed to bridge the gap between sophisticated AI algorithms and human interpretation, making it easier for researchers, developers, and educators to gain meaningful insights from agent-environment interactions.
 
- <br>
- ![alt text](static/images/ReadMe/XAI.gif)
- <br>
+![alt text](static/images/ReadMe/XAI.gif)
+
 
 ### Key Capabilities of the XAI System
 
@@ -140,9 +138,8 @@ We are grateful to all these contributors for their insights and resources, with
 
 ## Contact Us
 If you have any suggestions, feedback, or inquiries regarding this project, please feel free to reach out to us. We highly value your input and look forward to hearing your thoughts.
-
-Aisha Abu dahesh: aishadahesh11@gmail.com
-Ramiz Srour: ramiz.srour1@gmail.com
+- Aisha Abu dahesh: aishadahesh11@gmail.com
+- Ramiz Srour: ramiz.srour1@gmail.com
 
 
 

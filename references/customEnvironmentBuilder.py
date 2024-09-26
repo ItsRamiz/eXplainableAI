@@ -11,7 +11,7 @@ from minigrid.minigrid_env import MiniGridEnv
 class SimpleEnv(MiniGridEnv):
     def __init__(
             self,
-            size=5,
+            size=15,
             agent_start_pos=(1, 1),
             agent_start_dir=0,
             max_steps: int | None = None,
@@ -47,10 +47,17 @@ class SimpleEnv(MiniGridEnv):
 
 
         # Generate vertical separation wall
-        for i in range(0, height):
-            self.grid.set(2, i, Wall())
 
-        #self.grid.set(2,3,Wall())
+        self.grid.set(2,1,Wall())
+
+        self.grid.set(10,4,Lava())
+
+        for i in range(0,6):
+            self.grid.set(4, 3 + i, Door(COLOR_NAMES[i], is_locked=False))
+            self.grid.set(6,3+i , Door(COLOR_NAMES[i], is_locked=True))
+            self.grid.set(8, 3 + i, Key(COLOR_NAMES[i]))
+
+
         #self.grid.set(3,3,Wall())
         #self.grid.set(5, 3, Wall())
         #self.grid.set(5, 4, Wall())
@@ -60,12 +67,10 @@ class SimpleEnv(MiniGridEnv):
 
         # Place the door and key
         #self.grid.set(2, 2, Door(COLOR_NAMES[0], is_locked=True))
-        self.grid.set(1, 3, Key(COLOR_NAMES[0]))
-
-        self.grid.set(2,2,Lava())
 
         # Place a goal square in the bottom-right corner
-        self.put_obj(Goal(), width - 2, height - 2)
+        self.put_obj(Goal(), 10, 3)
+
 
         # Place the agent
         if self.agent_start_pos is not None:

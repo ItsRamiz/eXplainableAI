@@ -2,7 +2,7 @@ import torch
 
 import utils
 from .other import device
-from others.model import ACModel
+from references.model import ACModel
 
 
 class Agent:

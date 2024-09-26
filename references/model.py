@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
+import torch_ac
 import torch.nn.functional as F
 from torch.distributions.categorical import Categorical
-import torch_ac
 
 
 # Function from https://github.com/ikostrikov/pytorch-a2c-ppo-acktr/blob/master/model.py

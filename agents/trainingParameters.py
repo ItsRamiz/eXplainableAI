@@ -94,6 +94,7 @@ def build_training_command(data):
 
 def execute_command(command):
     global training_status
+    print("Started Train")
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while True:

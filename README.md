@@ -69,7 +69,6 @@ The XAI System (Explainable AI System) is designed to help users better understa
 
 <video controls src="static/images/ReadMe/XAI_VIDEO.mp4" title="Title"></video>
 
-
 ### Unified Environment Structure with GameStateTracker
 
 The project uses a generic code structure that supports all environments, ensuring efficiency and consistency while allowing flexibility for different agent behaviors and events.

@@ -1,6 +1,6 @@
 # Project Overview
 
-This project is a collaborative effort between The Technion and University of Haifa, aimed at developing a unique interactive tool for predicting and analyzing agent behavior in both virtual and real-world environments. The tool is designed to assist researchers and users by providing video outputs that match specific behavioral scenarios described through textual queries. By simulating temporal behaviors or events, the tool enhances research capabilities in fields such as reinforcement learning, artificial intelligence, and agent behavior prediction.
+This project is part of a BSc thesis at the University of Haifa, aimed at developing an interactive tool for predicting and analyzing agent behavior in both virtual and real-world environments. The tool allows users to simulate and analyze temporal behaviors or events and provides video outputs based on specific behavioral scenarios described through textual queries. It can be used in fields such as reinforcement learning, AI, and agent behavior prediction.
 
 ![alt text](static/images/ReadMe/MainPage.gif)
 
@@ -22,24 +22,37 @@ The tool provides users the ability to train reinforcement learning agents using
 - **Number of Backsteps to Propagate**: Set how many steps back in time the algorithm looks when updating the agent's actions.
 - **Max Norm of Gradient**: Prevent gradient explosion by setting a maximum allowable norm for gradients.
 
-This flexibility allows researchers to simulate and analyze a wide range of agent behaviors, adapting to various scenarios and environments efficiently.
+To initiate training, the following command is used:
+'python -m scripts.train --algo ppo --env (envName) --model (modelName) ParametersValues'
+
+Example:
+'python -m scripts.train --algo ppo --env MiniGrid-LavaCrossingS9N1-v0 --model LavaCrossing --save-interval 100 --frames 10000000 --lr 0.0001 --batch-size 1024 --epochs 10 --frames-per-proc 128 --discount 0.99 --gae-lambda 0.95 --entropy-coef 0.01 --value-loss-coef 0.5 --max-grad-norm 0.5 --clip-eps 0.2 --procs 16'
+
+This feature enables researchers to experiment with different configurations and explore a variety of agent behaviors in different environments.
+
 
 ## Feature 2: Graphical Visualization of Agent Behavior
 
-In addition to customizable training, the project offers a graphical interface that provides detailed visualizations of the agent's behavior across different environments. This feature enables users to observe and analyze how agents respond to various stimuli, environments, and tasks in real-time or post-training.
+This feature provides visualizations of the agent's behavior across various environments. Users can observe how agents respond to different stimuli in real-time or review recorded behaviors after training.
 
-The visualizations allow researchers to:
+Visualizations include:
 
-- **Track Agent Movements**: Observe agent paths and decision-making processes over time.
-- **Monitor Interactions**: Visualize how agents interact with objects, obstacles, and other agents in the environment.
-- **Behavioral Insights**: Gain insights into key moments, such as when agents learn optimal strategies, fail, or adapt their behavior in response to changes.
-- **Real-time and Post-training Visualization**: Users can either view the behavior of agents as it unfolds in real-time or analyze recorded behaviors after training has concluded.
+- Agent Movements: Tracking paths and decision-making processes.
+- Interactions: Visualizing interactions with objects, obstacles, or other agents.
+- Behavioral Insights: Key moments such as when agents succeed, fail, or adapt.
 
-This graphical visualization tool is crucial for better understanding agent behaviors in complex scenarios and helps bridge the gap between theoretical training data and real-world applications.
+Here’s how the feature works:
+
+1. Select an environment from MiniGrid.
+2. Define the parameters of interest.
+3. View the agent's behavior in real-time or post-training.
+
+![alt text](static/images/ReadMe/VisualizationPage.gif)
+
 
 ## Feature 3: XAI System (Explainable AI System)
 
-The centerpiece of this project is the **XAI System (Explainable AI System)**, a powerful tool that revolutionizes the way users interact with and understand agent behaviors. By leveraging advanced explainability techniques, the XAI system provides a transparent and intuitive interface for exploring complex reinforcement learning outcomes. It is designed to bridge the gap between sophisticated AI algorithms and human interpretation, making it easier for researchers, developers, and educators to gain meaningful insights from agent-environment interactions.
+The XAI System (Explainable AI System) is designed to help users better understand agent behaviors by making reinforcement learning outcomes more interpretable. Using explainability techniques, the system provides a clear and user-friendly interface that allows researchers, developers, and educators to explore and analyze how agents make decisions in different environments. This bridges the gap between complex AI algorithms and human understanding, making it easier to gain valuable insights from agent-environment interactions.
 
 ![alt text](static/images/ReadMe/XAI.gif)
 
@@ -54,26 +67,30 @@ The centerpiece of this project is the **XAI System (Explainable AI System)**, a
 
 - **Video Output and Analysis**: The system doesn’t just provide raw data—it returns full video outputs of the episodes where the selected events took place. This feature enables users to visually analyze how and why agents acted in specific ways during key moments. By reviewing these videos, users can detect patterns, assess the effectiveness of training, and gain a clearer understanding of the agent's thought process. Whether it’s for research, education, or AI model validation, these videos are instrumental in making agent behavior interpretable and accessible.
 
+<video controls src="static/images/ReadMe/XAI_VIDEO.mp4" title="Title"></video>
+
+
 ### Unified Environment Structure with GameStateTracker
 
-To ensure efficiency and consistency across different environments, the project is built on a **generic code structure** that applies to all environments. This standardized structure allows the system to manage a wide range of environments while maintaining flexibility for different agent behaviors and events.
+The project uses a generic code structure that supports all environments, ensuring efficiency and consistency while allowing flexibility for different agent behaviors and events.
 
-At the heart of this system is the **GameStateTracker**, a critical component designed to track the state of each episode in real-time. The **GameStateTracker** monitors key events, agent actions, and environmental changes throughout each episode, ensuring accurate logging and retrieval of relevant information. This tracking process is essential for the **XAI System**, as it identifies the moments when the user-defined events occur, helping the system to pinpoint and extract the right video segments for analysis.
+Central to this system is the GameStateTracker, which tracks each episode in real-time. It logs key events, agent actions, and environmental changes, ensuring accurate data collection. This tracking is crucial for the XAI System, as it identifies user-defined events and helps retrieve the exact video segments for analysis.
 
-By using this **GameStateTracker**, the system guarantees that the episodes retrieved for the user contain the exact events of interest, allowing for precise, explainable video outputs. The combination of a unified environment structure and the state-tracking mechanism enables seamless integration across different environments, making the system both robust and highly adaptable to various use cases.
+By integrating the GameStateTracker with a unified environment structure, the system ensures precise video outputs that focus on relevant events, making it robust and adaptable for various scenarios.
+
 
 ### Video Clipping for Efficiency
 
-To further enhance the efficiency of the visualization process, the project includes an **option for video clipping**. If the retrieved episodes result in videos that are too long for effective review, users have the option to receive **clips** of the relevant portions, rather than the entire video. This feature focuses on delivering shorter, more manageable video clips that highlight the key moments where the specified events occurred.
+To improve the efficiency of the visualization process, the project offers a video clipping feature. If episodes result in videos that are too long, users can opt to receive shorter clips that focus on the key moments where the specified events occurred, instead of reviewing the entire video.
 
-By providing clips instead of full-length episodes, this feature ensures that users can quickly and efficiently analyze agent behavior without the need to sift through lengthy recordings. This is especially useful for large-scale studies or when analyzing multiple episodes, significantly improving the overall user experience and making the visualization process much more efficient.
+This feature allows users to quickly and efficiently analyze agent behavior without having to sift through lengthy recordings. It’s particularly useful for large-scale studies or when analyzing multiple episodes, streamlining the process and enhancing the overall user experience.
 
 
 ## Feature 4: Custom-Made Environments
 
-Recognizing the limitations of pre-made MiniGrid environments, we’ve added the ability for users to create fully **custom environments**. This feature allows for complete control over the environment’s structure, letting users tailor every aspect to fit specific scenarios or research needs. Users can define custom map sizes, objects, obstacles, and goals, enabling experimentation with entirely new environments and challenges, making it an incredibly versatile tool for exploring agent behavior under a wide variety of conditions.
+To overcome the limitations of pre-made MiniGrid environments, we've introduced the ability for users to create custom environments. This feature gives users full control over the environment's design, allowing them to adjust elements like map size, objects, obstacles, and goals to suit specific scenarios or research needs. It provides a flexible platform for experimenting with new environments and challenges, making it a powerful tool for exploring agent behavior in diverse conditions.
 
-Additionally, users can **train agents on these custom environments**, applying reinforcement learning techniques with fully customizable parameters. This feature enhances the flexibility of the system, allowing for the creation of unique environments and tailored agent training experiences.
+Users can also train agents in these custom environments using reinforcement learning with adjustable parameters. This feature adds flexibility to the system, enabling unique environments and tailored training experiences.
 
 
 ### Key Customization Options
@@ -97,27 +114,27 @@ As part of our ongoing commitment to expanding and improving the capabilities of
 
 ### 1. Enhanced Text Understanding with LLM Integration
 
-While the agent already has a basic understanding of text-based inputs, we plan to significantly boost this capability by integrating a **Large Language Model (LLM)**. This will allow the agent to understand and process more complex user commands, opening the door for **natural language interaction**. 
+Currently, the agent has a basic understanding of text-based inputs, but we plan to enhance this by integrating a Large Language Model (LLM). This upgrade will enable the agent to process more complex user commands, allowing for natural language interaction.
 
-Instead of relying on predefined options for environment settings, event queries, and actions, users will soon be able to input textual instructions or speech commands. The LLM will interpret these inputs, providing a more fluid and intuitive way to interact with the system. This feature is expected to revolutionize how users create environments, train agents, and query events by making the interface more flexible and user-friendly.
+Instead of relying solely on predefined options for environment settings, event queries, and actions, users will soon be able to input text or speech commands. The LLM will interpret these inputs, offering a more intuitive and flexible way to interact with the system. This feature aims to make creating environments, training agents, and querying events more seamless and user-friendly.
 
 ### 2. More Diverse and Sparse Reward System
 
-One of the current limitations of existing MiniGrid environments is the simplicity of their reward systems. We are planning to introduce a **sparse rewards system** that offers greater diversity in how rewards are allocated. 
+A limitation of existing MiniGrid environments is the simplicity of their reward systems. To address this, we are developing a sparse rewards system that will offer more diverse ways of allocating rewards.
 
-This new system will allow for more sophisticated reinforcement learning by distributing rewards not just for goal achievement but based on various metrics, such as efficiency, exploration, or interaction with specific objects. The richer reward structures will enable users to train agents in more complex, real-world-aligned tasks, moving beyond the rigid constraints of traditional environments.
+This system will support more advanced reinforcement learning by rewarding not just goal achievement, but also factors like efficiency, exploration, and interactions with specific objects. These richer reward structures will enable users to train agents for more complex, real-world tasks, moving beyond the rigid constraints of traditional environments.
 
 ### 3. Custom Objects with Custom Behaviors
 
-In future updates, we will enable the ability to create and incorporate **custom objects** into environments. These objects can have unique behaviors and properties, opening up new possibilities for both research and practical applications.
+In future updates, we plan to introduce the ability to create and add custom objects to environments. These objects will have unique behaviors and properties, opening up new possibilities for both research and practical use.
 
-As we dive deeper into OpenAI’s source code for MiniGrid, we are getting closer to making this a reality. Users will be able to add objects with specific roles—such as tools, obstacles, or interactive elements—that go beyond what is currently possible with standard MiniGrid objects. This will allow for the creation of far more intricate and realistic environments, pushing the boundaries of agent training.
+As we continue to explore OpenAI’s MiniGrid code, we are making progress toward this feature. Users will be able to add objects with specific roles, such as tools, obstacles, or interactive elements, expanding beyond the standard MiniGrid objects. This will allow for the creation of more complex and realistic environments, further advancing agent training capabilities.
 
 ### 4. Expansion to Real-Life Environments
 
-While the current system primarily focuses on virtual environments, we are working on expanding it to operate in **real-life environments**. Leveraging advancements in **computer vision**, **image processing**, and **reinforcement learning**, we aim to create a framework where agents can operate in physical spaces.
+While the current system focuses on virtual environments, we are working to expand it into real-life environments. By leveraging advancements in computer vision, image processing, and reinforcement learning, we aim to create a framework that allows agents to operate in physical spaces.
 
-This feature will be particularly useful for real-world applications such as robotics, autonomous systems, and AI-driven decision-making in physical environments. By allowing agents to perceive and interact with the real world, the system could be used in industries ranging from manufacturing to autonomous driving, bringing the power of AI out of the virtual realm and into real life.
+This feature will be valuable for real-world applications such as robotics, autonomous systems, and AI-driven decision-making. By enabling agents to perceive and interact with the real world, the system could be applied across industries like manufacturing and autonomous driving, bridging the gap between virtual simulations and practical, real-world AI applications.
 
 ## References and Acknowledgments
 

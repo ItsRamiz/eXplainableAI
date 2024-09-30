@@ -67,7 +67,7 @@ The XAI System (Explainable AI System) is designed to help users better understa
 
 - **Video Output and Analysis**: The system doesn’t just provide raw data—it returns full video outputs of the episodes where the selected events took place. This feature enables users to visually analyze how and why agents acted in specific ways during key moments. By reviewing these videos, users can detect patterns, assess the effectiveness of training, and gain a clearer understanding of the agent's thought process. Whether it’s for research, education, or AI model validation, these videos are instrumental in making agent behavior interpretable and accessible.
 
-<video controls src="static/images/ReadMe/XAI_VIDEO.mp4" title="Title"></video>
+<video controls src="static/images/ReadMe/XAI_VIDEO.mp4" title="XAI"></video>
 
 ### Unified Environment Structure with GameStateTracker
 

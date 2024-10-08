@@ -7,7 +7,7 @@ This project is part of a BSc thesis at the University of Haifa, aimed at develo
 
 ## Feature 1: Customizable Agent Training with Reinforcement Learning
 
-The tool provides users the ability to train reinforcement learning agents using either predefined or fully customizable parameters, allowing for fine-tuned control over the training process. Users can adjust the following parameters:
+The tool provides users the ability to train reinforcement learning agents using either predefined or fully customizable parameters, allowing for fine-tuned control over the training process using the PPO (Proximal Policy Optimization) algorithm. Users can adjust the following parameters:
 
 - **Seed**: Initialize the training with a specific seed for reproducibility.
 - **Number of Processes**: Specify the number of parallel processes for faster training.

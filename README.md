@@ -28,6 +28,8 @@ To initiate training, the following command is used:
 Example:
 'python -m scripts.train --algo ppo --env MiniGrid-LavaCrossingS9N1-v0 --model LavaCrossing --save-interval 100 --frames 10000000 --lr 0.0001 --batch-size 1024 --epochs 10 --frames-per-proc 128 --discount 0.99 --gae-lambda 0.95 --entropy-coef 0.01 --value-loss-coef 0.5 --max-grad-norm 0.5 --clip-eps 0.2 --procs 16'
 
+Any parameters that we are not included in the command are replaced by a default value. (You can edit the default values in train.py).
+
 This feature enables researchers to experiment with different configurations and explore a variety of agent behaviors in different environments.
 
 

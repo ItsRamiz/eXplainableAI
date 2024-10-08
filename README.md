@@ -46,8 +46,10 @@ Visualizations include:
 Here’s how the feature works:
 
 1. Select an environment from MiniGrid.
-2. Define the parameters of interest.
-3. View the agent's behavior in real-time or post-training.
+2. Select a pre-trained or self-traine agent.
+3. View the agent's behavior in real-time.
+
+This works by capturing every frame and building a video in the format of .mp4.
 
 ![alt text](static/images/ReadMe/VisualizationPage.gif)
 

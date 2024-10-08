@@ -81,6 +81,8 @@ Central to this system is the GameStateTracker, which tracks each episode in rea
 
 By integrating the GameStateTracker with a unified environment structure, the system ensures precise video outputs that focus on relevant events, making it robust and adaptable for various scenarios.
 
+You can edit the implementation and add to the GameStateTracker a function that checks new conditions which returns 1 or 0 if the condition is met, and by that a new condition is tested.
+
 
 ### Video Clipping for Efficiency
 

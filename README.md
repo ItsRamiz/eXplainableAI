@@ -86,8 +86,11 @@ By integrating the GameStateTracker with a unified environment structure, the sy
 
 You can edit the implementation and add to the GameStateTracker a function that checks new conditions which returns 1 or 0 if the condition is met, and by that a new condition is tested.
 
-
 ![alt text](static/images/ReadMe/draw.png)
+
+You can add a new environment and implement a GameStateTracker by heading over to the environments/environment_template.py where a default template which is seperated by 3 parts, the first part handles the input from the HTML page, the second is loop where the episode runs and the last is the "SAVING VIDEOS" which saves the requested videos.
+
+def checkGameState receives all the parameters required to check if the episode is desired, return 1 if all the conditions needed are met.
 
 ### Video Clipping for Efficiency
 

@@ -22,8 +22,10 @@ The tool provides users the ability to train reinforcement learning agents using
 - **Number of Backsteps to Propagate**: Set how many steps back in time the algorithm looks when updating the agent's actions.
 - **Max Norm of Gradient**: Prevent gradient explosion by setting a maximum allowable norm for gradients.
 
-To initiate training, the following command is used:
+To initiate training manually, the following command is used:
 'python -m scripts.train --algo ppo --env (envName) --model (modelName) ParametersValues'
+
+You can add any parameter mentioned above:
 
 Example:
 'python -m scripts.train --algo ppo --env MiniGrid-LavaCrossingS9N1-v0 --model LavaCrossing --save-interval 100 --frames 10000000 --lr 0.0001 --batch-size 1024 --epochs 10 --frames-per-proc 128 --discount 0.99 --gae-lambda 0.95 --entropy-coef 0.01 --value-loss-coef 0.5 --max-grad-norm 0.5 --clip-eps 0.2 --procs 16'
@@ -31,7 +33,6 @@ Example:
 Any parameters that we are not included in the command are replaced by a default value. (You can edit the default values in train.py).
 
 This feature enables researchers to experiment with different configurations and explore a variety of agent behaviors in different environments.
-
 
 ## Feature 2: Graphical Visualization of Agent Behavior
 
@@ -50,6 +51,8 @@ Here’s how the feature works:
 3. View the agent's behavior in real-time.
 
 This works by capturing every frame and building a video in the format of .mp4.
+
+All videos are saved in Project Directory/static/videos.
 
 ![alt text](static/images/ReadMe/VisualizationPage.gif)
 

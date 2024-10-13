@@ -4,7 +4,11 @@ This project is part of a BSc thesis at the University of Haifa, aimed at develo
 
 ![alt text](static/images/ReadMe/MainPage.gif)
 
-'''TEST'''
+```python
+
+pip install hi
+
+```
 
 ## Feature 1: Customizable Agent Training with Reinforcement Learning
 

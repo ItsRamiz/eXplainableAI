@@ -120,6 +120,7 @@ Users can also train agents in these custom environments using reinforcement lea
 
 The custom environments are fully compatible with all the features above provided by the system.
 
+One-click to add a new object to the selected block in the mapping, double-click to remove the selected block.
 
 ## Upcoming Features
 

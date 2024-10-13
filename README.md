@@ -92,6 +92,8 @@ You can add a new environment and implement a GameStateTracker by heading over t
 
 def checkGameState receives all the parameters required to check if the episode is desired, return 1 if all the conditions needed are met.
 
+![alt text](static/images/ReadMe/logic.png)
+
 ### Video Clipping for Efficiency
 
 To improve the efficiency of the visualization process, the project offers a video clipping feature. If episodes result in videos that are too long, users can opt to receive shorter clips that focus on the key moments where the specified events occurred, instead of reviewing the entire video.

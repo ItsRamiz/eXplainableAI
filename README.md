@@ -87,6 +87,8 @@ By integrating the GameStateTracker with a unified environment structure, the sy
 You can edit the implementation and add to the GameStateTracker a function that checks new conditions which returns 1 or 0 if the condition is met, and by that a new condition is tested.
 
 
+![alt text](static/images/ReadMe/draw.png)
+
 ### Video Clipping for Efficiency
 
 To improve the efficiency of the visualization process, the project offers a video clipping feature. If episodes result in videos that are too long, users can opt to receive shorter clips that focus on the key moments where the specified events occurred, instead of reviewing the entire video.

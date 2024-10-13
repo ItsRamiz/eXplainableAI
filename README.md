@@ -4,11 +4,20 @@ This project is part of a BSc thesis at the University of Haifa, aimed at develo
 
 ![alt text](static/images/ReadMe/MainPage.gif)
 
+
+## INSTALLATION
+1. Clone the repository
 ```python
-
-pip install hi
-
+git clone https://github.com/ItsRamiz/eXplainableAI.git
 ```
+2. Navigate to requirements file and download all libraries.
+```python
+cd Installation_Guide
+```
+```python
+pip install -r requirements.txt
+```
+3. Follow the continued installation guidelines in installation1.txt
 
 ## Feature 1: Customizable Agent Training with Reinforcement Learning
 

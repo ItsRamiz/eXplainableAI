@@ -180,8 +180,6 @@ This project would not have been possible without the contributions and resource
 
 4. **Lucas Williams**: For his outstanding contributions to the fundamentals of reinforcement learning algorithms, which greatly informed and influenced the direction of this project.
 
-We are grateful to all these contributors for their insights and resources, without which this project could not have achieved its current scope and depth.
-
 
 ## Contact Us
 If you have any suggestions, feedback, or inquiries regarding this project, please feel free to reach out to us. We highly value your input and look forward to hearing your thoughts.

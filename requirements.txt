@@ -1,0 +1,11 @@
+array2gif==1.0.4
+Flask==3.1.0
+gymnasium==1.0.0
+minigrid==3.0.0
+moviepy==2.1.2
+numpy==2.2.4
+stable_baselines3==2.5.0
+tensorboardX==2.6.2.2
+tensorboardX==2.6.2.2
+torch==2.6.0
+torch_ac==1.4.0

@@ -10,14 +10,12 @@ This project is part of a BSc thesis at the University of Haifa, aimed at develo
 ```python
 git clone https://github.com/ItsRamiz/eXplainableAI.git
 ```
-2. Navigate to requirements file and download all libraries.
-```python
-cd Installation_Guide
-```
 ```python
 pip install -r requirements.txt
 ```
-3. Follow the continued installation guidelines in installation1.txt
+2. For Windows Support, Navigate to Installation_Guide and replace your environment penv.py file with the one specified. (Remove Comments).
+
+3. For Linux Support, Follow the continued installation guidelines in installation1.txt
 
 ## Feature 1: Customizable Agent Training with Reinforcement Learning
 
